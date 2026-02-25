@@ -71,6 +71,27 @@
     .btn-ghost:hover { background:#f3f4f6; color:#374151; }
     .btn-danger { color:#dc2626; padding:6px 12px; border-radius:6px; font-size:12px; border:1px solid #fecaca; transition:all .15s; cursor:pointer; }
     .btn-danger:hover { background:#fef2f2; }
+
+    /* Timeline */
+    .timeline { position:relative; padding-left:28px; }
+    .timeline::before { content:''; position:absolute; left:9px; top:0; bottom:0; width:2px; background:#e5e7eb; }
+    .timeline-item { position:relative; margin-bottom:16px; }
+    .timeline-dot { position:absolute; left:-23px; top:3px; width:16px; height:16px; border-radius:50%; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:9px; }
+    .tl-arama     { background:#3b82f6; }
+    .tl-not       { background:#6b7280; }
+    .tl-gorusum   { background:#8b5cf6; }
+    .tl-gosterim  { background:#f59e0b; }
+    .tl-teklif    { background:#10b981; }
+    .tl-email     { background:#06b6d4; }
+    .tl-mesaj     { background:#64748b; }
+    .result-begendi      { background:#d1fae5; color:#065f46; }
+    .result-kararsiz     { background:#fef3c7; color:#92400e; }
+    .result-begenmedi    { background:#fee2e2; color:#991b1b; }
+    .result-teklif_verdi { background:#dbeafe; color:#1e40af; }
+    .result-iptal        { background:#f3f4f6; color:#6b7280; }
+    .pf-yuksek { background:#fee2e2; color:#991b1b; }
+    .pf-uygun  { background:#d1fae5; color:#065f46; }
+    .pf-dusuk  { background:#dbeafe; color:#1e40af; }
   </style>
 </head>
 <body class="bg-slate-50 text-gray-800 h-screen flex flex-col overflow-hidden">
@@ -112,6 +133,11 @@
       <!-- Nav Links -->
       <div class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
 
+        <a href="#/pipeline" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+          <span>Pipeline</span>
+        </a>
+
         <a href="#/" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
           <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
           <span>Dashboard</span>
@@ -125,11 +151,6 @@
         <a href="#/musteriler" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
           <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           <span>Müşteriler</span>
-        </a>
-
-        <a href="#/pipeline" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
-          <span>Pipeline</span>
         </a>
 
         <a href="#/gorevler" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">

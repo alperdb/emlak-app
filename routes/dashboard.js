@@ -28,7 +28,61 @@ router.get('/', (_req, res) => {
       LIMIT  8
     `).all();
 
-    res.json({ stats, recentInteractions, pendingTasks });
+    // "Bugün kimi aramalıyım"
+    const callList = [];
+    const seen = new Set();
+
+    // 1. Sicak — 3 gün aranmadı
+    db.prepare(`
+      SELECT id, name, phone, status, last_contact_at
+      FROM customers
+      WHERE status='sicak'
+      AND (last_contact_at IS NULL OR last_contact_at < datetime('now','-3 days','localtime'))
+      LIMIT 5
+    `).all().forEach(c => {
+      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🔴 Sıcak lead — 3 gün aranmadı' }); }
+    });
+
+    // 2. Ilik — 3 gün aranmadı
+    db.prepare(`
+      SELECT id, name, phone, status, last_contact_at
+      FROM customers
+      WHERE status='ilik'
+      AND (last_contact_at IS NULL OR last_contact_at < datetime('now','-3 days','localtime'))
+      LIMIT 5
+    `).all().forEach(c => {
+      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🟡 Ilık lead — 3 gün aranmadı' }); }
+    });
+
+    // 3. Yeni — 7 gün aranmadı
+    db.prepare(`
+      SELECT id, name, phone, status, last_contact_at
+      FROM customers
+      WHERE status='yeni'
+      AND (last_contact_at IS NULL OR last_contact_at < datetime('now','-7 days','localtime'))
+      LIMIT 3
+    `).all().forEach(c => {
+      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🆕 Yeni müşteri — 7 gün aranmadı' }); }
+    });
+
+    // 4. Gösterim yapıldı, teklif yok
+    db.prepare(`
+      SELECT DISTINCT c.id, c.name, c.phone, c.status, c.last_contact_at
+      FROM customers c
+      JOIN showings s ON s.customer_id = c.id
+      WHERE s.result NOT IN ('teklif_verdi','iptal')
+      AND NOT EXISTS (
+        SELECT 1 FROM pipeline p
+        WHERE p.customer_id = c.id
+        AND p.stage IN ('teklif','pazarlik','kapandi')
+      )
+      AND c.status NOT IN ('kapandi-basarili','kapandi-vazgecti')
+      LIMIT 4
+    `).all().forEach(c => {
+      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🏠 Gösterim yapıldı — teklif yok' }); }
+    });
+
+    res.json({ stats, recentInteractions, pendingTasks, callList: callList.slice(0, 8) });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

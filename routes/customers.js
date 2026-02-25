@@ -50,8 +50,13 @@ router.get('/:id', (req, res) => {
     WHERE i.customer_id=? ORDER BY i.created_at DESC LIMIT 30
   `).all(req.params.id);
   const tasks = db.prepare(`SELECT * FROM tasks WHERE customer_id=? ORDER BY created_at DESC`).all(req.params.id);
+  const showings = db.prepare(`
+    SELECT s.*, l.title AS listing_title
+    FROM showings s LEFT JOIN listings l ON l.id = s.listing_id
+    WHERE s.customer_id=? ORDER BY s.date DESC, s.created_at DESC
+  `).all(req.params.id);
 
-  res.json({ ...customer, needs, interactions, tasks });
+  res.json({ ...customer, needs, interactions, tasks, showings });
 });
 
 // POST /api/customers

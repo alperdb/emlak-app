@@ -16,6 +16,7 @@ app.use('/api/customers',  require('./routes/customers'));
 app.use('/api/tasks',      require('./routes/tasks'));
 app.use('/api/settings',   require('./routes/settings'));
 app.use('/api/pipeline',   require('./routes/pipeline'));
+app.use('/api/showings',   require('./routes/showings'));
 
 // SPA fallback
 app.get('*', (_req, res) => {

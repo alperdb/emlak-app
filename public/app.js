@@ -82,11 +82,11 @@ const routes = {
 };
 
 function navigate() {
-  const hash = location.hash || '#/';
+  const hash = location.hash || '#/pipeline';
   document.querySelectorAll('.nav-link').forEach(el => {
     el.classList.toggle('active', el.getAttribute('href') === hash);
   });
-  (routes[hash] || renderDashboard)();
+  (routes[hash] || renderPipeline)();
 }
 
 window.addEventListener('hashchange', navigate);
@@ -95,7 +95,11 @@ window.addEventListener('load', () => {
     new Date().toLocaleDateString('tr-TR', { weekday:'long', day:'numeric', month:'long' });
   loadOfficeName();
   updateTaskBadge();
-  navigate();
+  if (!location.hash || location.hash === '#/') {
+    location.hash = '#/pipeline';
+  } else {
+    navigate();
+  }
 });
 
 async function loadOfficeName() {
@@ -162,7 +166,7 @@ document.getElementById('global-search').addEventListener('keydown', async (e) =
 async function renderDashboard() {
   setContent(`<div class="text-center text-gray-400 mt-20 text-sm">Yükleniyor...</div>`);
   try {
-    const { stats, recentInteractions, pendingTasks } = await apiFetch('/dashboard');
+    const { stats, recentInteractions, pendingTasks, callList } = await apiFetch('/dashboard');
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
@@ -203,6 +207,29 @@ async function renderDashboard() {
           <div class="text-sm text-purple-100 mt-1 font-medium">Bekleyen Görev</div>
         </div>
       </div>
+
+      <!-- Bugün Kimi Aramalıyım -->
+      ${callList && callList.length > 0 ? `
+      <div class="bg-white rounded-xl border border-orange-200 overflow-hidden shadow-sm mb-5">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-orange-100 bg-orange-50">
+          <h2 class="font-semibold text-orange-900 text-sm">📞 Bugün Kimi Aramalıyım?</h2>
+          <span class="text-xs text-orange-600 font-medium">${callList.length} kişi</span>
+        </div>
+        <div class="divide-y divide-gray-50">
+          ${callList.map(c => `
+            <div class="flex items-center gap-4 px-5 py-3">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold text-gray-900 text-sm">${c.name}</span>
+                  ${statusBadge(c.status)}
+                </div>
+                <p class="text-xs text-gray-500 mt-0.5">${c.call_reason}</p>
+              </div>
+              <a href="tel:${c.phone}" class="font-mono text-sm text-blue-600 hover:text-blue-800 shrink-0">${c.phone}</a>
+              <button onclick="openCustomerDetail(${c.id})" class="btn-ghost shrink-0">Profil</button>
+            </div>`).join('')}
+        </div>
+      </div>` : ''}
 
       <!-- Alt İki Panel -->
       <div class="grid lg:grid-cols-2 gap-5">
@@ -518,6 +545,7 @@ function tableRowListing(l) {
       <td>${statusBadge(l.status)}</td>
       <td>
         <div class="flex gap-1">
+          <button onclick="openListingDetail(${l.id})" class="btn-ghost">Detay</button>
           <button onclick="openListingModal(${l.id})" class="btn-ghost">Düzenle</button>
         </div>
       </td>
@@ -597,6 +625,61 @@ function tableRowCustomer(c) {
     </tr>`;
 }
 
+const TL_DOT = {
+  arama:'tl-arama', not:'tl-not', gorusum:'tl-gorusum',
+  gosterim:'tl-gosterim', teklif:'tl-teklif',
+  email:'tl-email', mesaj:'tl-mesaj', gosteriminotu:'tl-gosterim'
+};
+const TL_ICON = {
+  arama:'📞', not:'📝', gorusum:'🤝', email:'📧', mesaj:'💬',
+  gosterim:'🏠', gosteriminotu:'🏠', teklif:'💰'
+};
+
+function buildTimeline(interactions, showings) {
+  const items = [
+    ...interactions.map(i => ({ ...i, _kind: 'interaction', _date: i.created_at })),
+    ...showings.map(s => ({ ...s, _kind: 'showing', _date: s.date || s.created_at })),
+  ].sort((a, b) => new Date(b._date) - new Date(a._date));
+
+  if (items.length === 0) {
+    return `<p class="text-gray-400 text-sm text-center py-6">Henüz aktivite yok</p>`;
+  }
+
+  return `<div class="timeline">${items.map(item => {
+    if (item._kind === 'interaction') {
+      const dotClass = TL_DOT[item.type] || 'tl-not';
+      const icon = TL_ICON[item.type] || '📝';
+      return `
+        <div class="timeline-item">
+          <div class="timeline-dot ${dotClass}">${icon}</div>
+          <div class="ml-1">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${item.type}</span>
+              <span class="text-xs text-gray-400 ml-auto">${relDate(item.created_at)}</span>
+            </div>
+            <p class="text-sm text-gray-700">${item.content}</p>
+            ${item.listing_title ? `<p class="text-xs text-gray-400 mt-0.5">🏢 ${item.listing_title}</p>` : ''}
+          </div>
+        </div>`;
+    } else {
+      return `
+        <div class="timeline-item">
+          <div class="timeline-dot tl-gosterim">🏠</div>
+          <div class="ml-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs font-semibold text-amber-700">Gösterim</span>
+              <span class="badge result-${item.result} text-xs">${item.result}</span>
+              ${item.price_feedback ? `<span class="badge pf-${item.price_feedback} text-xs">Fiyat: ${item.price_feedback}</span>` : ''}
+              <span class="text-xs text-gray-400 ml-auto">${fmtDate(item._date)}</span>
+            </div>
+            ${item.listing_title ? `<p class="text-sm text-gray-700">🏢 ${item.listing_title}</p>` : ''}
+            ${item.reason ? `<p class="text-xs text-gray-500 italic mt-0.5">${item.reason}</p>` : ''}
+          </div>
+        </div>`;
+    }
+  }).join('')}</div>`;
+}
+
 // ─── MÜŞTERİ DETAY ──────────────────────────────────
 async function openCustomerDetail(id) {
   try {
@@ -641,24 +724,17 @@ async function openCustomerDetail(id) {
 
       <div class="grid lg:grid-cols-2 gap-5">
 
-        <!-- Etkileşimler -->
+        <!-- Timeline (Etkileşimler + Gösterimler) -->
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-            <h2 class="font-semibold text-gray-900 text-sm">Etkileşimler</h2>
-            <button onclick="openInteractionModal(${c.id})" class="btn-ghost">+ Not Ekle</button>
+            <h2 class="font-semibold text-gray-900 text-sm">Aktivite Zaman Çizelgesi</h2>
+            <div class="flex gap-2">
+              <button onclick="openShowingModal(${c.id})" class="btn-ghost">📍 Gösterim</button>
+              <button onclick="openInteractionModal(${c.id})" class="btn-ghost">+ Not</button>
+            </div>
           </div>
-          <div class="divide-y divide-gray-50 max-h-80 overflow-y-auto">
-            ${c.interactions.length === 0
-              ? `<p class="text-gray-400 text-sm text-center py-8">Henüz etkileşim yok</p>`
-              : c.interactions.map(i => `
-                  <div class="px-5 py-3">
-                    <div class="flex items-center gap-2 mb-1">
-                      <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${i.type}</span>
-                      <span class="ml-auto text-xs text-gray-400">${relDate(i.created_at)}</span>
-                    </div>
-                    <p class="text-sm text-gray-700">${i.content}</p>
-                  </div>`).join('')
-            }
+          <div class="p-5 max-h-96 overflow-y-auto">
+            ${buildTimeline(c.interactions, c.showings || [])}
           </div>
         </div>
 
@@ -832,6 +908,83 @@ async function openListingModal(id) {
   });
 }
 
+// ─── PORTFÖY DETAY ────────────────────────────────────
+async function openListingDetail(id) {
+  setContent(`<div class="text-center text-gray-400 mt-20 text-sm">Yükleniyor...</div>`);
+  try {
+    const { listing: l, matches } = await apiFetch(`/listings/${id}/matches`);
+
+    const SCORE_COLOR = s => s >= 70 ? 'text-green-600' : s >= 40 ? 'text-amber-600' : 'text-gray-500';
+    const SCORE_BG    = s => s >= 70 ? 'bg-green-50 border-green-200' : s >= 40 ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200';
+
+    setContent(`
+      <div class="mb-5">
+        <button onclick="renderListings()" class="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          Portföy listesine dön
+        </button>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex gap-2 mb-2">${statusBadge(l.status)}</div>
+            <h1 class="text-2xl font-bold text-gray-900">${l.title}</h1>
+            <p class="text-gray-500 mt-1 text-sm">${[l.neighborhood, l.district, l.province].filter(Boolean).join(', ')}</p>
+            <div class="flex gap-4 mt-2 text-sm text-gray-600">
+              ${l.room_count ? `<span>🛏 ${l.room_count}</span>` : ''}
+              ${l.net_sqm ? `<span>📐 ${l.net_sqm} m²</span>` : ''}
+              ${l.floor_number ? `<span>🏢 Kat ${l.floor_number}</span>` : ''}
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-2xl font-bold text-blue-700">${fmt(l.price)}</p>
+            ${l.monthly_dues ? `<p class="text-sm text-gray-400">Aidat: ${fmt(l.monthly_dues)}/ay</p>` : ''}
+            <button onclick="openListingModal(${l.id})" class="btn-secondary text-sm mt-3">Düzenle</button>
+          </div>
+        </div>
+        ${l.description ? `<p class="text-sm text-gray-600 mt-4 pt-4 border-t border-gray-100">${l.description}</p>` : ''}
+        ${l.internal_notes ? `<p class="text-xs text-gray-400 italic mt-2">İç not: ${l.internal_notes}</p>` : ''}
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <h2 class="font-semibold text-gray-900 text-sm">🎯 Kime Uygun?</h2>
+          <span class="text-xs text-gray-500">${matches.length} eşleşme bulundu</span>
+        </div>
+        ${matches.length === 0
+          ? `<p class="text-gray-400 text-sm text-center py-10">Kriterlere uyan müşteri bulunamadı</p>`
+          : `<div class="divide-y divide-gray-50">
+              ${matches.map(c => `
+                <div class="flex items-center gap-4 px-5 py-4 ${SCORE_BG(c.score)} border-l-2 ${SCORE_BG(c.score)}">
+                  <div class="shrink-0 text-center w-14">
+                    <div class="text-xl font-bold ${SCORE_COLOR(c.score)}">${c.score}%</div>
+                    <div class="text-xs text-gray-400">uyum</div>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="font-semibold text-gray-900 text-sm">${c.name}</span>
+                      ${statusBadge(c.status)}
+                    </div>
+                    <div class="flex flex-wrap gap-1">
+                      ${c.reasons.map(r => `<span class="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded">${r}</span>`).join('')}
+                    </div>
+                    ${c.max_price ? `<p class="text-xs text-gray-400 mt-1">Bütçe: maks ${fmt(c.max_price)}</p>` : ''}
+                  </div>
+                  <div class="shrink-0 flex flex-col gap-1 items-end">
+                    <a href="tel:${c.phone}" class="font-mono text-xs text-blue-600">${c.phone}</a>
+                    <button onclick="openCustomerDetail(${c.id})" class="btn-ghost">Profil</button>
+                  </div>
+                </div>`).join('')}
+            </div>`
+        }
+      </div>
+    `);
+  } catch (err) {
+    setContent(`<p class="text-red-500 text-center mt-20 text-sm">Hata: ${err.message}</p>`);
+  }
+}
+
 // ─── MÜŞTERİ MODAL ───────────────────────────────────
 async function openCustomerModal(id) {
   let c = {};
@@ -977,6 +1130,70 @@ function openInteractionModal(customerId) {
       await apiFetch(`/customers/${customerId}/interactions`, { method: 'POST', body: data });
       closeModal();
       toast('Not kaydedildi');
+      openCustomerDetail(customerId);
+    } catch (err) { toast(err.message, 'err'); }
+  });
+}
+
+// ─── GÖSTERİM MODAL ─────────────────────────────────
+async function openShowingModal(customerId) {
+  let listings = [];
+  try { listings = await apiFetch('/listings?status=aktif'); } catch (_) {}
+
+  openModal(`
+    <div class="p-6">
+      <h2 class="text-lg font-bold text-gray-900 mb-5">📍 Gösterim Kaydı Ekle</h2>
+      <form id="showing-form" class="space-y-4">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Portföy</label>
+          <select name="listing_id" class="inp mt-1">
+            <option value="">— Seçiniz —</option>
+            ${listings.map(l => `<option value="${l.id}">${l.title} · ${l.district || ''} · ${fmt(l.price)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-sm font-medium text-gray-700">Sonuç</label>
+            <select name="result" class="inp mt-1">
+              <option value="begendi">Beğendi</option>
+              <option value="kararsiz" selected>Kararsız</option>
+              <option value="begenmedi">Beğenmedi</option>
+              <option value="teklif_verdi">Teklif Verdi</option>
+              <option value="iptal">İptal</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-700">Fiyat Görüşü</label>
+            <select name="price_feedback" class="inp mt-1">
+              <option value="uygun" selected>Uygun</option>
+              <option value="yuksek">Yüksek</option>
+              <option value="dusuk">Düşük</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Gösterim Tarihi</label>
+          <input name="date" type="date" value="${new Date().toISOString().slice(0,10)}" class="inp mt-1" />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Neden / Açıklama</label>
+          <textarea name="reason" rows="3" class="inp mt-1" placeholder="Müşterinin yorumu, neden beğendi/beğenmedi..."></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2 border-t border-gray-100">
+          <button type="button" onclick="closeModal()" class="btn-secondary">İptal</button>
+          <button type="submit" class="btn-primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  `);
+  document.getElementById('showing-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.target));
+    data.customer_id = customerId;
+    try {
+      await apiFetch('/showings', { method: 'POST', body: data });
+      closeModal();
+      toast('Gösterim kaydedildi');
       openCustomerDetail(customerId);
     } catch (err) { toast(err.message, 'err'); }
   });

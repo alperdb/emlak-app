@@ -99,6 +99,17 @@ db.exec(`
     updated_at  TEXT DEFAULT (datetime('now','localtime'))
   );
 
+  CREATE TABLE IF NOT EXISTS showings (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id    INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+    listing_id     INTEGER REFERENCES listings(id) ON DELETE SET NULL,
+    result         TEXT NOT NULL DEFAULT 'kararsiz',
+    price_feedback TEXT DEFAULT 'uygun',
+    reason         TEXT,
+    date           TEXT DEFAULT (date('now','localtime')),
+    created_at     TEXT DEFAULT (datetime('now','localtime'))
+  );
+
   INSERT OR IGNORE INTO settings (key, value) VALUES
     ('office_name',  'Emlak Ofisim'),
     ('advisor_name', 'Danışman'),

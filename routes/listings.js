@@ -30,6 +30,58 @@ router.get('/', (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// GET /api/listings/:id/matches
+router.get('/:id/matches', (req, res) => {
+  try {
+    const listing = db.prepare(`SELECT * FROM listings WHERE id=?`).get(req.params.id);
+    if (!listing) return res.status(404).json({ error: 'Portföy bulunamadı' });
+
+    const customers = db.prepare(`
+      SELECT c.id, c.name, c.phone, c.status, c.last_contact_at,
+             n.intent, n.max_price, n.min_price, n.districts,
+             n.room_counts, n.urgency, n.financing
+      FROM customers c
+      LEFT JOIN customer_needs n ON n.customer_id = c.id
+      WHERE c.status NOT IN ('kapandi-basarili','kapandi-vazgecti')
+    `).all();
+
+    const results = customers.map(c => {
+      const reasons = [];
+      let score = 0;
+
+      // Intent match (10 pts)
+      const intentOk = (c.intent === 'alma' && listing.type === 'satilik') ||
+                        (c.intent === 'kiralama' && listing.type === 'kiralik');
+      if (c.intent && intentOk) { score += 10; reasons.push('İşlem tipi uyuyor'); }
+
+      // Price match (40 pts)
+      if (c.max_price && c.max_price >= listing.price) {
+        score += 40; reasons.push('Bütçe yeterli');
+      }
+
+      // District match (30 pts)
+      if (c.districts && listing.district &&
+          c.districts.toLowerCase().includes(listing.district.toLowerCase())) {
+        score += 30; reasons.push('Tercih semti uyuyor');
+      }
+
+      // Room count match (20 pts)
+      if (c.room_counts && listing.room_count &&
+          c.room_counts.includes(listing.room_count)) {
+        score += 20; reasons.push('Oda sayısı uyuyor');
+      }
+
+      return { ...c, score, reasons };
+    });
+
+    const matches = results
+      .filter(c => c.score > 0)
+      .sort((a, b) => b.score - a.score);
+
+    res.json({ listing, matches });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // GET /api/listings/:id
 router.get('/:id', (req, res) => {
   const row = db.prepare(`SELECT * FROM listings WHERE id=?`).get(req.params.id);
