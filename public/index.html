@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emlak Ofisi Yönetimi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Nav */
+    .nav-link { transition: all 0.12s; }
+    .nav-link.active { background: #2563eb !important; color: #fff !important; }
+    .nav-link.active svg, .nav-link.active span { color: #fff !important; }
+
+    /* Badges */
+    .badge { display:inline-flex; align-items:center; padding:2px 9px; border-radius:9999px; font-size:11px; font-weight:600; letter-spacing:.01em; }
+    .badge-sicak     { background:#fef3c7; color:#92400e; }
+    .badge-yeni      { background:#dbeafe; color:#1e40af; }
+    .badge-ilik      { background:#dcfce7; color:#166534; }
+    .badge-soguk     { background:#f1f5f9; color:#64748b; }
+    .badge-aktif     { background:#d1fae5; color:#065f46; }
+    .badge-opsiyonda { background:#fde68a; color:#92400e; }
+    .badge-satildi   { background:#e2e8f0; color:#475569; }
+    .badge-arsivlendi{ background:#f3f4f6; color:#9ca3af; }
+
+    /* Priority */
+    .prio-acil  { color:#dc2626; font-weight:600; }
+    .prio-normal{ color:#2563eb; }
+    .prio-dusuk { color:#9ca3af; }
+
+    /* Table */
+    .data-table { width:100%; border-collapse:collapse; }
+    .data-table th { text-align:left; padding:11px 16px; font-size:11px; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid #e5e7eb; background:#f9fafb; }
+    .data-table td { padding:13px 16px; border-bottom:1px solid #f3f4f6; font-size:13px; color:#374151; vertical-align:middle; }
+    .data-table tbody tr:hover td { background:#f8fafc; }
+    .data-table tbody tr:last-child td { border-bottom:none; }
+
+    /* KPI gradients */
+    .kpi-blue   { background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
+    .kpi-green  { background:linear-gradient(135deg,#10b981,#047857); }
+    .kpi-orange { background:linear-gradient(135deg,#f59e0b,#d97706); }
+    .kpi-purple { background:linear-gradient(135deg,#8b5cf6,#6d28d9); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:3px; }
+
+    /* Input base */
+    .inp { width:100%; border:1px solid #d1d5db; border-radius:8px; padding:8px 12px; font-size:13px; outline:none; transition:border-color .15s,box-shadow .15s; }
+    .inp:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+
+    /* Button variants */
+    .btn-primary { background:#2563eb; color:#fff; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:500; transition:background .15s; cursor:pointer; }
+    .btn-primary:hover { background:#1d4ed8; }
+    .btn-secondary { background:#fff; color:#374151; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:500; border:1px solid #d1d5db; transition:background .15s; cursor:pointer; }
+    .btn-secondary:hover { background:#f9fafb; }
+    .btn-ghost { color:#6b7280; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:500; border:1px solid #e5e7eb; transition:all .15s; cursor:pointer; }
+    .btn-ghost:hover { background:#f3f4f6; color:#374151; }
+    .btn-danger { color:#dc2626; padding:6px 12px; border-radius:6px; font-size:12px; border:1px solid #fecaca; transition:all .15s; cursor:pointer; }
+    .btn-danger:hover { background:#fef2f2; }
+  </style>
+</head>
+<body class="bg-slate-50 text-gray-800 h-screen flex flex-col overflow-hidden">
+
+  <!-- TOP BAR -->
+  <header class="bg-white border-b border-gray-200 px-5 h-14 flex items-center gap-4 shrink-0 z-10" style="box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div class="flex-1 max-w-sm">
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input id="global-search" type="text" placeholder="Ara... (Enter)"
+          class="w-full pl-9 pr-3 py-1.5 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all" />
+      </div>
+    </div>
+    <div class="ml-auto flex items-center gap-4">
+      <span id="task-badge" class="hidden text-xs bg-orange-100 text-orange-700 font-semibold px-3 py-1 rounded-full border border-orange-200"></span>
+      <span class="text-xs text-gray-400 font-medium select-none" id="current-date"></span>
+    </div>
+  </header>
+
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <nav class="w-56 bg-slate-900 shrink-0 flex flex-col overflow-hidden">
+
+      <!-- Logo Area -->
+      <div class="px-4 pt-5 pb-3">
+        <div class="bg-white flex items-center justify-center overflow-hidden"
+             style="border-radius:12px; padding:16px; min-height:80px; max-height:96px;">
+          <img id="sidebar-logo" src="" alt="" class="object-contain hidden" style="max-width:100%;max-height:64px;" />
+          <div id="sidebar-logo-placeholder" class="text-3xl select-none">🏠</div>
+        </div>
+        <p class="text-slate-200 font-semibold mt-2.5 text-sm text-center truncate" id="office-name-sidebar">Emlak Ofisi</p>
+      </div>
+
+      <div class="mx-4 border-t border-slate-700/50 mb-1"></div>
+
+      <!-- Nav Links -->
+      <div class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+
+        <a href="#/" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#/portfoy" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          <span>Portföy</span>
+        </a>
+
+        <a href="#/musteriler" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>Müşteriler</span>
+        </a>
+
+        <a href="#/pipeline" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+          <span>Pipeline</span>
+        </a>
+
+        <a href="#/gorevler" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Görevler</span>
+        </a>
+
+      </div>
+
+      <div class="mx-4 border-t border-slate-700/50 mb-1"></div>
+
+      <!-- Bottom -->
+      <div class="px-3 pb-4">
+        <a href="#/ayarlar" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>Ayarlar</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="flex-1 overflow-y-auto p-6">
+      <div class="text-center text-gray-400 mt-20">Yükleniyor...</div>
+    </main>
+  </div>
+
+  <!-- MODAL OVERLAY -->
+  <div id="modal-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden" onclick="closeModal()"></div>
+  <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none hidden">
+    <div id="modal-box" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto pointer-events-auto"
+         style="box-shadow:0 25px 60px rgba(0,0,0,.18);">
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+    <div id="toast-msg" class="px-5 py-3 rounded-xl shadow-xl text-sm font-medium text-white bg-slate-900"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
