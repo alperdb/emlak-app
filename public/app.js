@@ -170,7 +170,7 @@ async function renderDashboard() {
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <h1 class="text-2xl font-bold text-gray-900">Kontrol Paneli</h1>
           <p class="text-sm text-gray-400 mt-0.5">Günlük operasyon özeti</p>
         </div>
       </div>
@@ -178,7 +178,7 @@ async function renderDashboard() {
       <!-- Hızlı İşlemler -->
       <div class="flex gap-3 mb-6">
         <button onclick="openCustomerModal()" class="btn-primary flex items-center gap-2">
-          <span class="text-base">👤</span> Yeni Lead
+          <span class="text-base">👤</span> Yeni Aday Müşteri
         </button>
         <button onclick="openListingModal()" class="btn-secondary flex items-center gap-2">
           <span class="text-base">🏢</span> Yeni Portföy
@@ -200,7 +200,7 @@ async function renderDashboard() {
         </div>
         <div class="kpi-orange rounded-xl p-5 text-white shadow-sm">
           <div class="text-3xl font-bold">${stats.hotLeads}</div>
-          <div class="text-sm text-orange-100 mt-1 font-medium">Sıcak Lead</div>
+          <div class="text-sm text-orange-100 mt-1 font-medium">Sıcak Aday</div>
         </div>
         <div class="kpi-purple rounded-xl p-5 text-white shadow-sm">
           <div class="text-3xl font-bold">${stats.pendingTasks}</div>
@@ -289,7 +289,7 @@ async function renderDashboard() {
 
 // ─── PIPELINE / KANBAN ───────────────────────────────
 const STAGE_LABELS = {
-  lead       : 'Lead',
+  lead       : 'Aday Müşteri',
   nitelikli  : 'Nitelikli',
   gosterim   : 'Gösterim',
   teklif     : 'Teklif',
@@ -328,7 +328,7 @@ async function renderPipeline() {
     setContent(`
       <div class="flex items-center justify-between mb-5">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Pipeline</h1>
+          <h1 class="text-2xl font-bold text-gray-900">Satış Süreci</h1>
           <p class="text-sm text-gray-400 mt-0.5">${totalActive} aktif fırsat</p>
         </div>
         <button onclick="openPipelineModal()" class="btn-primary">+ Yeni Fırsat</button>
@@ -564,7 +564,7 @@ async function renderCustomers(filterStatus = 'tumu') {
           <h1 class="text-2xl font-bold text-gray-900">Müşteriler</h1>
           <p class="text-sm text-gray-400 mt-0.5">${customers.length} kayıt</p>
         </div>
-        <button onclick="openCustomerModal()" class="btn-primary">+ Yeni Lead</button>
+        <button onclick="openCustomerModal()" class="btn-primary">+ Yeni Aday Müşteri</button>
       </div>
 
       <div class="flex gap-2 mb-5 flex-wrap">
@@ -580,7 +580,7 @@ async function renderCustomers(filterStatus = 'tumu') {
         ? `<div class="text-center text-gray-400 mt-20">
              <div class="text-5xl mb-4">👥</div>
              <p class="font-medium text-gray-500">Müşteri bulunamadı</p>
-             <button onclick="openCustomerModal()" class="mt-4 btn-primary">+ Lead Ekle</button>
+             <button onclick="openCustomerModal()" class="mt-4 btn-primary">+ Aday Müşteri Ekle</button>
            </div>`
         : `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
              <table class="data-table">
@@ -993,7 +993,7 @@ async function openCustomerModal(id) {
   const sel = (a, b) => a === b ? 'selected' : '';
   openModal(`
     <div class="p-6">
-      <h2 class="text-lg font-bold text-gray-900 mb-5">${id ? 'Müşteri Düzenle' : 'Yeni Lead Ekle'}</h2>
+      <h2 class="text-lg font-bold text-gray-900 mb-5">${id ? 'Müşteri Düzenle' : 'Yeni Aday Müşteri Ekle'}</h2>
       <form id="customer-form" class="space-y-4">
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -1093,7 +1093,7 @@ async function openCustomerModal(id) {
       if (id) await apiFetch(`/customers/${id}`, { method: 'PUT', body: data });
       else     await apiFetch('/customers', { method: 'POST', body: data });
       closeModal();
-      toast(id ? 'Müşteri güncellendi' : 'Lead eklendi');
+      toast(id ? 'Müşteri güncellendi' : 'Aday Müşteri eklendi');
       renderCustomers();
     } catch (err) { toast(err.message, 'err'); }
   });
