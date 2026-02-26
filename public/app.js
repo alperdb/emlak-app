@@ -61,14 +61,27 @@ function relDate(d) {
   if (diff < 0)  return 'yakında';
   return `${diff} gün önce`;
 }
+const STATUS_LABELS = {
+  yeni             : 'Yeni',
+  sicak            : 'Sıcak',
+  ilik             : 'Ilık',
+  soguk            : 'Soğuk',
+  'aktif-musteri'  : 'Aktif Müşteri',
+  aktif            : 'Aktif',
+  opsiyonda        : 'Opsiyonda',
+  satildi          : 'Satıldı',
+  arsivlendi       : 'Arşivlendi',
+  'kapandi-basarili': 'Kapandı ✓',
+  'kapandi-vazgecti': 'Vazgeçti',
+};
+const STATUS_CSS = {
+  yeni:'badge-yeni', sicak:'badge-sicak', ilik:'badge-ilik', soguk:'badge-soguk',
+  'aktif-musteri':'badge-aktif', aktif:'badge-aktif', opsiyonda:'badge-opsiyonda',
+  satildi:'badge-satildi', arsivlendi:'badge-arsivlendi',
+  'kapandi-basarili':'badge-aktif', 'kapandi-vazgecti':'badge-soguk'
+};
 function statusBadge(s) {
-  const map = {
-    yeni:'badge-yeni', sicak:'badge-sicak', ilik:'badge-ilik', soguk:'badge-soguk',
-    'aktif-musteri':'badge-aktif', aktif:'badge-aktif', opsiyonda:'badge-opsiyonda',
-    satildi:'badge-satildi', arsivlendi:'badge-arsivlendi',
-    'kapandi-basarili':'badge-aktif', 'kapandi-vazgecti':'badge-soguk'
-  };
-  return `<span class="badge ${map[s] || 'badge-soguk'}">${s}</span>`;
+  return `<span class="badge ${STATUS_CSS[s] || 'badge-soguk'}">${STATUS_LABELS[s] || s}</span>`;
 }
 
 // ─── Router ─────────────────────────────────────────
@@ -557,7 +570,11 @@ async function renderCustomers(filterStatus = 'tumu') {
   setContent(`<div class="text-center text-gray-400 mt-20 text-sm">Yükleniyor...</div>`);
   try {
     const customers = await apiFetch(`/customers?status=${filterStatus}`);
-    const tabs = ['tumu','yeni','sicak','ilik','soguk','aktif-musteri'];
+    const tabs = [
+      { val: 'tumu',           label: 'Tümü' },
+      { val: 'yeni',           label: 'Yeni' },
+      { val: 'aktif-musteri',  label: 'Aktif Müşteri' },
+    ];
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
@@ -568,11 +585,11 @@ async function renderCustomers(filterStatus = 'tumu') {
       </div>
 
       <div class="flex gap-2 mb-5 flex-wrap">
-        ${tabs.map(s => `
-          <button onclick="renderCustomers('${s}')"
-            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === s
+        ${tabs.map(t => `
+          <button onclick="renderCustomers('${t.val}')"
+            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === t.val
               ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${s}
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${t.label}
           </button>`).join('')}
       </div>
 
