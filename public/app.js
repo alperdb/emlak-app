@@ -494,7 +494,12 @@ async function renderListings(filterStatus = 'aktif') {
   setContent(`<div class="text-center text-gray-400 mt-20 text-sm">Yükleniyor...</div>`);
   try {
     const listings = await apiFetch(`/listings?status=${filterStatus}`);
-    const tabs = ['aktif','opsiyonda','satildi','arsivlendi'];
+    const tabs = [
+      { val: 'aktif',      label: 'Aktif' },
+      { val: 'opsiyonda',  label: 'Opsiyonda' },
+      { val: 'satildi',    label: 'Satıldı' },
+      { val: 'arsivlendi', label: 'Arşivlendi' },
+    ];
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
@@ -505,11 +510,11 @@ async function renderListings(filterStatus = 'aktif') {
       </div>
 
       <div class="flex gap-2 mb-5">
-        ${tabs.map(s => `
-          <button onclick="renderListings('${s}')"
-            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === s
+        ${tabs.map(t => `
+          <button onclick="renderListings('${t.val}')"
+            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === t.val
               ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${s}
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${t.label}
           </button>`).join('')}
       </div>
 
@@ -1231,11 +1236,11 @@ async function renderTasks(filterStatus = 'bekliyor') {
       </div>
 
       <div class="flex gap-2 mb-5">
-        ${['bekliyor','tamamlandi'].map(s => `
-          <button onclick="renderTasks('${s}')"
-            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === s
+        ${[{val:'bekliyor',label:'Bekleyenler'},{val:'tamamlandi',label:'Tamamlananlar'}].map(t => `
+          <button onclick="renderTasks('${t.val}')"
+            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === t.val
               ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${s}
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${t.label}
           </button>`).join('')}
       </div>
 
