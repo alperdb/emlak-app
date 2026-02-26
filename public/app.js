@@ -189,35 +189,35 @@ async function renderDashboard() {
       </div>
 
       <!-- Hızlı İşlemler -->
-      <div class="flex gap-3 mb-6">
-        <button onclick="openCustomerModal()" class="btn-primary flex items-center gap-2">
-          <span class="text-base">👤</span> Yeni Aday Müşteri
+      <div class="flex gap-3 mb-6 items-center">
+        <button onclick="openCustomerModal()" class="btn-primary flex items-center gap-2 h-9">
+          <span>👤</span> Yeni Aday Müşteri
         </button>
-        <button onclick="openListingModal()" class="btn-secondary flex items-center gap-2">
-          <span class="text-base">🏢</span> Yeni Portföy
+        <button onclick="openListingModal()" class="btn-secondary flex items-center gap-2 h-9">
+          <span>🏢</span> Yeni Portföy
         </button>
-        <button onclick="openNewTaskModal()" class="btn-secondary flex items-center gap-2">
-          <span class="text-base">✅</span> Görev Ekle
+        <button onclick="openNewTaskModal()" class="btn-secondary flex items-center gap-2 h-9">
+          <span>✅</span> Görev Ekle
         </button>
       </div>
 
       <!-- KPI -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="kpi-blue rounded-xl p-5 text-white shadow-sm">
-          <div class="text-3xl font-bold">${stats.activeListings}</div>
-          <div class="text-sm text-blue-100 mt-1 font-medium">Aktif Portföy</div>
+        <div class="kpi-blue rounded-xl px-5 py-4 text-white shadow-sm">
+          <div class="text-2xl font-bold">${stats.activeListings}</div>
+          <div class="text-xs text-blue-100 mt-0.5 font-medium">Aktif Portföy</div>
         </div>
-        <div class="kpi-green rounded-xl p-5 text-white shadow-sm">
-          <div class="text-3xl font-bold">${stats.activeCustomers}</div>
-          <div class="text-sm text-green-100 mt-1 font-medium">Aktif Müşteri</div>
+        <div class="kpi-green rounded-xl px-5 py-4 text-white shadow-sm">
+          <div class="text-2xl font-bold">${stats.activeCustomers}</div>
+          <div class="text-xs text-green-100 mt-0.5 font-medium">Aktif Müşteri</div>
         </div>
-        <div class="kpi-orange rounded-xl p-5 text-white shadow-sm">
-          <div class="text-3xl font-bold">${stats.hotLeads}</div>
-          <div class="text-sm text-orange-100 mt-1 font-medium">Sıcak Aday</div>
+        <div class="kpi-orange rounded-xl px-5 py-4 text-white shadow-sm">
+          <div class="text-2xl font-bold">${stats.hotLeads}</div>
+          <div class="text-xs text-orange-100 mt-0.5 font-medium">Sıcak Aday</div>
         </div>
-        <div class="kpi-purple rounded-xl p-5 text-white shadow-sm">
-          <div class="text-3xl font-bold">${stats.pendingTasks}</div>
-          <div class="text-sm text-purple-100 mt-1 font-medium">Bekleyen Görev</div>
+        <div class="kpi-purple rounded-xl px-5 py-4 text-white shadow-sm">
+          <div class="text-2xl font-bold">${stats.pendingTasks}</div>
+          <div class="text-xs text-purple-100 mt-0.5 font-medium">Bekleyen Görev</div>
         </div>
       </div>
 
@@ -255,7 +255,7 @@ async function renderDashboard() {
           </div>
           <div class="divide-y divide-gray-50">
             ${pendingTasks.length === 0
-              ? `<p class="text-gray-400 text-sm text-center py-8">Bekleyen görev yok 🎉</p>`
+              ? `<p class="text-gray-400 text-xs text-center py-5">Bekleyen görev yok 🎉</p>`
               : pendingTasks.map(t => `
                   <div class="flex items-center gap-3 px-5 py-3">
                     <button onclick="completeTask(${t.id})" class="w-4 h-4 rounded border-2 border-gray-300 shrink-0 hover:border-blue-500 transition-colors"></button>
@@ -280,15 +280,17 @@ async function renderDashboard() {
           </div>
           <div class="divide-y divide-gray-50">
             ${recentInteractions.length === 0
-              ? `<p class="text-gray-400 text-sm text-center py-8">Henüz etkileşim yok</p>`
+              ? `<p class="text-gray-400 text-xs text-center py-5">Henüz etkileşim yok</p>`
               : recentInteractions.map(i => `
-                  <div class="px-5 py-3">
-                    <div class="flex items-center gap-2 mb-0.5">
-                      <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">${i.type}</span>
-                      <span class="text-xs font-semibold text-gray-800">${i.customer_name}</span>
-                      <span class="ml-auto text-xs text-gray-400">${relDate(i.created_at)}</span>
+                  <div class="px-5 py-3.5">
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center gap-2 min-w-0">
+                        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded shrink-0">${i.type}</span>
+                        <span class="text-sm font-semibold text-gray-900 truncate">${i.customer_name}</span>
+                      </div>
+                      <span class="text-xs text-gray-400 shrink-0 ml-2">${relDate(i.created_at)}</span>
                     </div>
-                    <p class="text-xs text-gray-500 truncate">${i.content}</p>
+                    <p class="text-xs text-gray-500 leading-relaxed truncate">${i.content}</p>
                   </div>`).join('')
             }
           </div>
@@ -320,13 +322,13 @@ const STAGE_COLORS = {
   kaybedildi : 'bg-red-50    border-red-300',
 };
 const STAGE_HEADER = {
-  lead       : 'bg-slate-200  text-slate-700',
-  nitelikli  : 'bg-blue-100   text-blue-800',
-  gosterim   : 'bg-purple-100 text-purple-800',
-  teklif     : 'bg-amber-100  text-amber-800',
-  pazarlik   : 'bg-orange-100 text-orange-800',
-  kapandi    : 'bg-green-100  text-green-800',
-  kaybedildi : 'bg-red-100    text-red-800',
+  lead       : 'bg-slate-300  text-slate-900',
+  nitelikli  : 'bg-blue-200   text-blue-900',
+  gosterim   : 'bg-purple-200 text-purple-900',
+  teklif     : 'bg-amber-200  text-amber-900',
+  pazarlik   : 'bg-orange-200 text-orange-900',
+  kapandi    : 'bg-green-200  text-green-900',
+  kaybedildi : 'bg-red-200    text-red-900',
 };
 
 async function renderPipeline() {
@@ -350,9 +352,9 @@ async function renderPipeline() {
       <!-- KPI özet -->
       <div class="flex gap-3 mb-5 flex-wrap">
         ${stages.map(s => `
-          <div class="bg-white border border-gray-200 rounded-lg px-4 py-2 text-center shadow-sm">
-            <div class="text-lg font-bold text-gray-900">${kpi[s]}</div>
-            <div class="text-xs text-gray-500">${STAGE_LABELS[s]}</div>
+          <div class="bg-white border border-gray-200 rounded-xl px-5 py-3 text-center shadow-sm" style="min-width:90px;">
+            <div class="text-2xl font-bold text-gray-900">${kpi[s]}</div>
+            <div class="text-xs font-medium text-gray-500 mt-0.5">${STAGE_LABELS[s]}</div>
           </div>`).join('')}
       </div>
 
@@ -370,7 +372,7 @@ async function renderPipeline() {
                 : grouped[s].map(item => pipelineCard(item, stages)).join('')
               }
               <button onclick="openPipelineModal(null,'${s}')"
-                class="w-full text-xs text-gray-400 hover:text-gray-600 py-2 border border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
+                class="btn-primary w-full text-xs mt-1">
                 + Ekle
               </button>
             </div>
@@ -387,14 +389,14 @@ function pipelineCard(item, stages) {
     `<option value="${s}" ${item.stage === s ? 'selected' : ''}>${STAGE_LABELS[s]}</option>`
   ).join('');
   return `
-    <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow">
+    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow">
       <div class="flex items-start justify-between gap-2 mb-2">
         <p class="text-sm font-semibold text-gray-900 leading-tight">${item.title}</p>
         <button onclick="deletePipelineItem(${item.id})" class="text-gray-200 hover:text-red-400 text-base shrink-0">×</button>
       </div>
-      ${item.customer_name ? `<p class="text-xs text-gray-500 mb-1">👤 ${item.customer_name}</p>` : ''}
-      ${item.listing_title ? `<p class="text-xs text-gray-500 mb-1">🏢 ${item.listing_title}</p>` : ''}
-      ${item.value ? `<p class="text-xs font-medium text-blue-600 mb-2">${fmt(item.value)}</p>` : ''}
+      ${item.customer_name ? `<p class="text-xs text-gray-600 font-medium mb-0.5">👤 ${item.customer_name}</p>` : ''}
+      ${item.listing_title ? `<p class="text-xs text-gray-400 mb-1">🏢 ${item.listing_title}</p>` : ''}
+      ${item.value ? `<p class="text-sm font-bold text-blue-700 mt-1 mb-1">${fmt(item.value)}</p>` : ''}
       ${item.notes ? `<p class="text-xs text-gray-400 italic mb-2 truncate">${item.notes}</p>` : ''}
       <div class="mt-2">
         <select onchange="movePipelineStage(${item.id}, this.value)"
@@ -524,7 +526,7 @@ async function renderListings(filterStatus = 'aktif') {
              <p class="font-medium text-gray-500">Bu kategoride portföy yok</p>
              <button onclick="openListingModal()" class="mt-4 btn-primary">+ Portföy Ekle</button>
            </div>`
-        : `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        : `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm" style="border-top:3px solid #2563eb;">
              <table class="data-table">
                <thead>
                  <tr>
@@ -534,7 +536,7 @@ async function renderListings(filterStatus = 'aktif') {
                    <th>m²</th>
                    <th>Fiyat</th>
                    <th>Durum</th>
-                   <th style="width:80px"></th>
+                   <th style="width:90px"></th>
                  </tr>
                </thead>
                <tbody>
@@ -550,19 +552,24 @@ async function renderListings(filterStatus = 'aktif') {
 }
 
 function tableRowListing(l) {
+  const typeLabel = l.type === 'satilik'
+    ? `<span class="text-blue-600 font-semibold">Satılık</span>`
+    : l.type === 'kiralik'
+    ? `<span class="text-green-600 font-semibold">Kiralık</span>`
+    : (l.type || '');
   return `
     <tr>
       <td>
-        <div class="font-semibold text-gray-900">${l.title}</div>
-        <div class="text-xs text-gray-400 mt-0.5">${l.type}</div>
+        <div class="font-bold text-gray-900">${l.title}</div>
+        <div class="text-xs mt-0.5">${typeLabel}</div>
       </td>
       <td class="text-gray-600">${[l.district, l.province].filter(Boolean).join(', ') || '—'}</td>
       <td class="text-gray-600">${l.room_count || '—'}</td>
       <td class="text-gray-600">${l.net_sqm ? l.net_sqm + ' m²' : '—'}</td>
-      <td class="font-semibold text-gray-900">${fmt(l.price)}</td>
+      <td class="font-bold text-blue-700">${fmt(l.price)}</td>
       <td>${statusBadge(l.status)}</td>
       <td>
-        <div class="flex gap-1">
+        <div class="flex gap-1.5">
           <button onclick="openListingDetail(${l.id})" class="btn-ghost">Detay</button>
           <button onclick="openListingModal(${l.id})" class="btn-ghost">Düzenle</button>
         </div>
