@@ -40,7 +40,7 @@ router.get('/', (_req, res) => {
       AND (last_contact_at IS NULL OR last_contact_at < datetime('now','-3 days','localtime'))
       LIMIT 5
     `).all().forEach(c => {
-      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🔴 Sıcak lead — 3 gün aranmadı' }); }
+      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🔴 Sıcak aday — 3 gün aranmadı' }); }
     });
 
     // 2. Ilik — 3 gün aranmadı
@@ -51,7 +51,7 @@ router.get('/', (_req, res) => {
       AND (last_contact_at IS NULL OR last_contact_at < datetime('now','-3 days','localtime'))
       LIMIT 5
     `).all().forEach(c => {
-      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🟡 Ilık lead — 3 gün aranmadı' }); }
+      if (!seen.has(c.id)) { seen.add(c.id); callList.push({ ...c, call_reason: '🟡 Ilık aday — 3 gün aranmadı' }); }
     });
 
     // 3. Yeni — 7 gün aranmadı

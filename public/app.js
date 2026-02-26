@@ -71,8 +71,18 @@ const STATUS_LABELS = {
   opsiyonda        : 'Opsiyonda',
   satildi          : 'Satıldı',
   arsivlendi       : 'Arşivlendi',
-  'kapandi-basarili': 'Kapandı ✓',
+  'kapandi-basarili': 'Kapandı',
   'kapandi-vazgecti': 'Vazgeçti',
+};
+const INTERACTION_LABELS = {
+  not            : 'Not',
+  arama          : 'Telefon Araması',
+  mesaj          : 'Mesaj',
+  gorusum        : 'Görüşme',
+  gosteriminotu  : 'Gösterim Notu',
+  email          : 'E-posta',
+  gosterim       : 'Gösterim',
+  teklif         : 'Teklif',
 };
 const STATUS_CSS = {
   yeni:'badge-yeni', sicak:'badge-sicak', ilik:'badge-ilik', soguk:'badge-soguk',
@@ -170,7 +180,14 @@ document.getElementById('global-search').addEventListener('keydown', async (e) =
             <tbody>${customers.map(tableRowCustomer).join('')}</tbody>
           </table>
         </div>` : ''}
-      ${!listings.length && !customers.length ? '<p class="text-gray-400 text-center mt-20 text-sm">Sonuç bulunamadı</p>' : ''}
+      ${!listings.length && !customers.length ? `
+        <div class="text-center py-20">
+          <div class="w-14 h-14 bg-gray-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+            <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <p class="text-sm font-semibold text-gray-700 mb-1">Sonuç bulunamadı</p>
+          <p class="text-xs text-gray-400">Farklı bir arama terimi deneyin</p>
+        </div>` : ''}
     `);
   } catch (err) { toast(err.message, 'err'); }
 });
@@ -203,22 +220,38 @@ async function renderDashboard() {
 
       <!-- KPI -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div class="kpi-blue rounded-xl px-5 py-4 text-white shadow-sm">
-          <div class="text-2xl font-bold">${stats.activeListings}</div>
-          <div class="text-xs text-blue-100 mt-0.5 font-medium">Aktif Portföy</div>
-        </div>
-        <div class="kpi-green rounded-xl px-5 py-4 text-white shadow-sm">
-          <div class="text-2xl font-bold">${stats.activeCustomers}</div>
-          <div class="text-xs text-green-100 mt-0.5 font-medium">Aktif Müşteri</div>
-        </div>
-        <div class="kpi-orange rounded-xl px-5 py-4 text-white shadow-sm">
-          <div class="text-2xl font-bold">${stats.hotLeads}</div>
-          <div class="text-xs text-orange-100 mt-0.5 font-medium">Sıcak Aday</div>
-        </div>
-        <div class="kpi-purple rounded-xl px-5 py-4 text-white shadow-sm">
-          <div class="text-2xl font-bold">${stats.pendingTasks}</div>
-          <div class="text-xs text-purple-100 mt-0.5 font-medium">Bekleyen Görev</div>
-        </div>
+        <a href="#/portfoy" class="kpi-blue rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
+          <div class="flex items-start justify-between mb-2">
+            <div class="text-3xl font-bold leading-none">${stats.activeListings}</div>
+            <svg class="w-5 h-5 text-blue-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          </div>
+          <div class="text-xs font-semibold text-blue-100">Aktif Portföy</div>
+          <div class="text-xs text-blue-200 mt-0.5">Satışa hazır ilanlar →</div>
+        </a>
+        <a href="#/musteriler" class="kpi-green rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
+          <div class="flex items-start justify-between mb-2">
+            <div class="text-3xl font-bold leading-none">${stats.activeCustomers}</div>
+            <svg class="w-5 h-5 text-green-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div class="text-xs font-semibold text-green-100">Aktif Müşteri</div>
+          <div class="text-xs text-green-200 mt-0.5">Takipte olan adaylar →</div>
+        </a>
+        <a href="#/musteriler?status=sicak" class="kpi-orange rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
+          <div class="flex items-start justify-between mb-2">
+            <div class="text-3xl font-bold leading-none">${stats.hotLeads}</div>
+            <svg class="w-5 h-5 text-orange-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
+          </div>
+          <div class="text-xs font-semibold text-orange-100">Sıcak Aday</div>
+          <div class="text-xs text-orange-200 mt-0.5">Öncelikli müşteriler →</div>
+        </a>
+        <a href="#/gorevler" class="kpi-purple rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
+          <div class="flex items-start justify-between mb-2">
+            <div class="text-3xl font-bold leading-none">${stats.pendingTasks}</div>
+            <svg class="w-5 h-5 text-purple-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div class="text-xs font-semibold text-purple-100">Bekleyen Görev</div>
+          <div class="text-xs text-purple-200 mt-0.5">${stats.pendingTasks > 0 ? 'Tamamlanmayı bekliyor →' : 'Tüm görevler tamam →'}</div>
+        </a>
       </div>
 
       <!-- Bugün Kimi Aramalıyım -->
@@ -255,7 +288,11 @@ async function renderDashboard() {
           </div>
           <div class="divide-y divide-gray-50">
             ${pendingTasks.length === 0
-              ? `<p class="text-gray-400 text-xs text-center py-5">Bekleyen görev yok 🎉</p>`
+              ? `<div class="text-center py-8 px-5">
+                   <p class="text-sm font-medium text-gray-700 mb-1">Tüm görevler tamamlandı</p>
+                   <p class="text-xs text-gray-400 mb-4">Yeni bir görev ekleyerek takibi sürdürün</p>
+                   <button onclick="openNewTaskModal()" class="btn-primary text-xs">+ Görev Ekle</button>
+                 </div>`
               : pendingTasks.map(t => `
                   <div class="flex items-center gap-3 px-5 py-3">
                     <button onclick="completeTask(${t.id})" class="w-4 h-4 rounded border-2 border-gray-300 shrink-0 hover:border-blue-500 transition-colors"></button>
@@ -280,12 +317,16 @@ async function renderDashboard() {
           </div>
           <div class="divide-y divide-gray-50">
             ${recentInteractions.length === 0
-              ? `<p class="text-gray-400 text-xs text-center py-5">Henüz etkileşim yok</p>`
+              ? `<div class="text-center py-8 px-5">
+                   <p class="text-sm font-medium text-gray-700 mb-1">Henüz etkileşim kaydedilmedi</p>
+                   <p class="text-xs text-gray-400 mb-4">Müşteri profilinden arama, not veya görüşme ekleyin</p>
+                   <a href="#/musteriler" class="btn-secondary text-xs">Müşterilere Git →</a>
+                 </div>`
               : recentInteractions.map(i => `
                   <div class="px-5 py-3.5">
                     <div class="flex items-center justify-between mb-1">
                       <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded shrink-0">${i.type}</span>
+                        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded shrink-0">${INTERACTION_LABELS[i.type] || i.type}</span>
                         <span class="text-sm font-semibold text-gray-900 truncate">${i.customer_name}</span>
                       </div>
                       <span class="text-xs text-gray-400 shrink-0 ml-2">${relDate(i.created_at)}</span>
@@ -309,26 +350,17 @@ const STAGE_LABELS = {
   gosterim   : 'Gösterim',
   teklif     : 'Teklif',
   pazarlik   : 'Pazarlık',
-  kapandi    : 'Kapandı ✓',
-  kaybedildi : 'Kaybedildi ✗',
+  kapandi    : 'Kapandı',
+  kaybedildi : 'Kaybedildi',
 };
-const STAGE_COLORS = {
-  lead       : 'bg-slate-100 border-slate-300',
-  nitelikli  : 'bg-blue-50  border-blue-300',
-  gosterim   : 'bg-purple-50 border-purple-300',
-  teklif     : 'bg-amber-50  border-amber-300',
-  pazarlik   : 'bg-orange-50 border-orange-300',
-  kapandi    : 'bg-green-50  border-green-300',
-  kaybedildi : 'bg-red-50    border-red-300',
-};
-const STAGE_HEADER = {
-  lead       : 'bg-slate-300  text-slate-900',
-  nitelikli  : 'bg-blue-200   text-blue-900',
-  gosterim   : 'bg-purple-200 text-purple-900',
-  teklif     : 'bg-amber-200  text-amber-900',
-  pazarlik   : 'bg-orange-200 text-orange-900',
-  kapandi    : 'bg-green-200  text-green-900',
-  kaybedildi : 'bg-red-200    text-red-900',
+const STAGE_ACCENT = {
+  lead       : '#94a3b8',
+  nitelikli  : '#3b82f6',
+  gosterim   : '#8b5cf6',
+  teklif     : '#f59e0b',
+  pazarlik   : '#f97316',
+  kapandi    : '#10b981',
+  kaybedildi : '#ef4444',
 };
 
 async function renderPipeline() {
@@ -350,29 +382,32 @@ async function renderPipeline() {
       </div>
 
       <!-- KPI özet -->
-      <div class="flex gap-3 mb-5 flex-wrap">
+      <div class="flex gap-2 mb-5 flex-wrap">
         ${stages.map(s => `
-          <div class="bg-white border border-gray-200 rounded-xl px-5 py-3 text-center shadow-sm" style="min-width:90px;">
-            <div class="text-2xl font-bold text-gray-900">${kpi[s]}</div>
-            <div class="text-xs font-medium text-gray-500 mt-0.5">${STAGE_LABELS[s]}</div>
+          <div class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-center"
+               style="min-width:84px; border-top:2px solid ${STAGE_ACCENT[s]};">
+            <div class="text-xl font-bold text-gray-900">${kpi[s]}</div>
+            <div class="text-xs text-gray-500 mt-0.5 font-medium">${STAGE_LABELS[s]}</div>
           </div>`).join('')}
       </div>
 
       <!-- Kanban board -->
-      <div class="flex gap-4 overflow-x-auto pb-4" style="min-height:500px;">
+      <div class="flex gap-3 overflow-x-auto pb-4" style="min-height:520px;">
         ${stages.map(s => `
-          <div class="shrink-0 w-64 flex flex-col" style="min-width:240px;">
-            <div class="flex items-center justify-between px-3 py-2 rounded-t-lg ${STAGE_HEADER[s]}">
-              <span class="text-xs font-semibold uppercase tracking-wide">${STAGE_LABELS[s]}</span>
-              <span class="text-xs font-bold bg-white/60 px-1.5 py-0.5 rounded-full">${kpi[s]}</span>
+          <div class="pipe-col">
+            <div class="pipe-col-head" style="--col-accent:${STAGE_ACCENT[s]};">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full shrink-0" style="background:${STAGE_ACCENT[s]};"></span>
+                <span class="text-xs font-semibold text-gray-700 uppercase tracking-wide">${STAGE_LABELS[s]}</span>
+              </div>
+              <span class="pipe-count-badge">${kpi[s]}</span>
             </div>
-            <div class="flex-1 border-x border-b border-gray-200 rounded-b-lg p-2 space-y-2 bg-gray-50/50 overflow-y-auto" style="max-height:480px;">
+            <div class="pipe-col-body">
               ${grouped[s].length === 0
-                ? `<p class="text-xs text-gray-300 text-center mt-6">Boş</p>`
+                ? `<p class="text-xs text-gray-300 text-center mt-8 leading-relaxed">Henüz kayıt yok.<br>Aşağıdan ekleyin.</p>`
                 : grouped[s].map(item => pipelineCard(item, stages)).join('')
               }
-              <button onclick="openPipelineModal(null,'${s}')"
-                class="btn-primary w-full text-xs mt-1">
+              <button onclick="openPipelineModal(null,'${s}')" class="pipe-add-btn">
                 + Ekle
               </button>
             </div>
@@ -389,22 +424,29 @@ function pipelineCard(item, stages) {
     `<option value="${s}" ${item.stage === s ? 'selected' : ''}>${STAGE_LABELS[s]}</option>`
   ).join('');
   return `
-    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow">
-      <div class="flex items-start justify-between gap-2 mb-2">
-        <p class="text-sm font-semibold text-gray-900 leading-tight">${item.title}</p>
-        <button onclick="deletePipelineItem(${item.id})" class="text-gray-200 hover:text-red-400 text-base shrink-0">×</button>
+    <div class="pipe-card">
+      <!-- 1. Müşteri adı -->
+      <div class="flex items-start justify-between gap-1.5 mb-1.5">
+        <p class="text-sm font-bold text-gray-900 leading-snug truncate flex-1">${item.customer_name || item.title}</p>
+        <button onclick="deletePipelineItem(${item.id})"
+          class="text-gray-300 hover:text-red-400 text-base leading-none shrink-0 transition-colors">×</button>
       </div>
-      ${item.customer_name ? `<p class="text-xs text-gray-600 font-medium mb-0.5">👤 ${item.customer_name}</p>` : ''}
-      ${item.listing_title ? `<p class="text-xs text-gray-400 mb-1">🏢 ${item.listing_title}</p>` : ''}
-      ${item.value ? `<p class="text-sm font-bold text-blue-700 mt-1 mb-1">${fmt(item.value)}</p>` : ''}
-      ${item.notes ? `<p class="text-xs text-gray-400 italic mb-2 truncate">${item.notes}</p>` : ''}
-      <div class="mt-2">
+      <!-- 2. Portföy adı -->
+      ${item.listing_title
+        ? `<p class="text-xs text-gray-400 truncate mb-2">🏢 ${item.listing_title}</p>`
+        : `<p class="text-xs text-gray-300 mb-2 italic">Portföy seçilmedi</p>`}
+      <!-- 3. Fiyat -->
+      ${item.value
+        ? `<p class="text-[15px] font-bold text-blue-600 mb-2 tracking-tight">${fmt(item.value)}</p>`
+        : `<p class="text-xs text-gray-300 mb-2">— Değer yok</p>`}
+      <!-- 4. Aşama + tarih -->
+      <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
         <select onchange="movePipelineStage(${item.id}, this.value)"
-          class="w-full text-xs border border-gray-200 rounded px-2 py-1 bg-gray-50 text-gray-700 cursor-pointer">
+          class="flex-1 text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-600 cursor-pointer focus:outline-none focus:border-blue-400 transition-colors">
           ${stageOptions}
         </select>
+        <span class="text-xs text-gray-300 shrink-0 whitespace-nowrap">${relDate(item.updated_at)}</span>
       </div>
-      <p class="text-xs text-gray-300 mt-1">${relDate(item.updated_at)}</p>
     </div>`;
 }
 
@@ -514,17 +556,18 @@ async function renderListings(filterStatus = 'aktif') {
       <div class="flex gap-2 mb-5">
         ${tabs.map(t => `
           <button onclick="renderListings('${t.val}')"
-            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === t.val
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${t.label}
+            class="tab-btn ${filterStatus === t.val ? 'tab-active' : ''}">${t.label}
           </button>`).join('')}
       </div>
 
       ${listings.length === 0
-        ? `<div class="text-center text-gray-400 mt-20">
-             <div class="text-5xl mb-4">🏢</div>
-             <p class="font-medium text-gray-500">Bu kategoride portföy yok</p>
-             <button onclick="openListingModal()" class="mt-4 btn-primary">+ Portföy Ekle</button>
+        ? `<div class="text-center py-20">
+             <div class="w-14 h-14 bg-gray-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+               <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+             </div>
+             <p class="text-sm font-semibold text-gray-700 mb-1">Bu kategoride portföy bulunmuyor</p>
+             <p class="text-xs text-gray-400 mb-5">Yeni portföy ekleyerek başlayın</p>
+             <button onclick="openListingModal()" class="btn-primary">+ Portföy Ekle</button>
            </div>`
         : `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm" style="border-top:3px solid #2563eb;">
              <table class="data-table">
@@ -599,17 +642,18 @@ async function renderCustomers(filterStatus = 'tumu') {
       <div class="flex gap-2 mb-5 flex-wrap">
         ${tabs.map(t => `
           <button onclick="renderCustomers('${t.val}')"
-            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === t.val
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${t.label}
+            class="tab-btn ${filterStatus === t.val ? 'tab-active' : ''}">${t.label}
           </button>`).join('')}
       </div>
 
       ${customers.length === 0
-        ? `<div class="text-center text-gray-400 mt-20">
-             <div class="text-5xl mb-4">👥</div>
-             <p class="font-medium text-gray-500">Müşteri bulunamadı</p>
-             <button onclick="openCustomerModal()" class="mt-4 btn-primary">+ Aday Müşteri Ekle</button>
+        ? `<div class="text-center py-20">
+             <div class="w-14 h-14 bg-gray-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+               <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+             </div>
+             <p class="text-sm font-semibold text-gray-700 mb-1">Bu kategoride müşteri yok</p>
+             <p class="text-xs text-gray-400 mb-5">Yeni aday müşteri ekleyerek başlayın</p>
+             <button onclick="openCustomerModal()" class="btn-primary">+ Aday Müşteri Ekle</button>
            </div>`
         : `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
              <table class="data-table">
@@ -671,7 +715,10 @@ function buildTimeline(interactions, showings) {
   ].sort((a, b) => new Date(b._date) - new Date(a._date));
 
   if (items.length === 0) {
-    return `<p class="text-gray-400 text-sm text-center py-6">Henüz aktivite yok</p>`;
+    return `<div class="text-center py-8">
+      <p class="text-sm font-medium text-gray-600 mb-1">Aktivite kaydı bulunmuyor</p>
+      <p class="text-xs text-gray-400">Arama, not veya gösterim ekleyerek başlayın</p>
+    </div>`;
   }
 
   return `<div class="timeline">${items.map(item => {
@@ -683,7 +730,7 @@ function buildTimeline(interactions, showings) {
           <div class="timeline-dot ${dotClass}">${icon}</div>
           <div class="ml-1">
             <div class="flex items-center gap-2 mb-0.5">
-              <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${item.type}</span>
+              <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">${INTERACTION_LABELS[item.type] || item.type}</span>
               <span class="text-xs text-gray-400 ml-auto">${relDate(item.created_at)}</span>
             </div>
             <p class="text-sm text-gray-700">${item.content}</p>
@@ -775,7 +822,10 @@ async function openCustomerDetail(id) {
           </div>
           <div class="divide-y divide-gray-50">
             ${c.tasks.length === 0
-              ? `<p class="text-gray-400 text-sm text-center py-8">Görev yok</p>`
+              ? `<div class="text-center py-8">
+                   <p class="text-sm font-medium text-gray-600 mb-1">Görev bulunmuyor</p>
+                   <p class="text-xs text-gray-400">Bu müşteri için görev ekleyin</p>
+                 </div>`
               : c.tasks.map(t => `
                   <div class="flex items-center gap-3 px-5 py-3">
                     <input type="checkbox" ${t.status === 'tamamlandi' ? 'checked' : ''}
@@ -805,12 +855,19 @@ async function openListingModal(id) {
           <label class="text-sm font-medium text-gray-700">Başlık *</label>
           <input name="title" value="${l.title || ''}" required class="inp mt-1" />
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-3 gap-3">
           <div>
             <label class="text-sm font-medium text-gray-700">Tür</label>
             <select name="type" class="inp mt-1">
               <option value="satilik" ${sel(l.type,'satilik')}>Satılık</option>
               <option value="kiralik" ${sel(l.type,'kiralik')}>Kiralık</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-gray-700">Emlak Tipi *</label>
+            <select name="property_type" required class="inp mt-1">
+              ${[['konut','Konut'],['daire','Daire'],['villa','Villa'],['mustakil','Müstakil'],['arsa','Arsa'],['isyeri','İş Yeri'],['dukkan','Dükkan'],['ofis','Ofis'],['depo','Depo']].map(([v,t]) =>
+                `<option value="${v}" ${sel(l.property_type || 'konut', v)}>${t}</option>`).join('')}
             </select>
           </div>
           <div>
@@ -982,7 +1039,10 @@ async function openListingDetail(id) {
           <span class="text-xs text-gray-500">${matches.length} eşleşme bulundu</span>
         </div>
         ${matches.length === 0
-          ? `<p class="text-gray-400 text-sm text-center py-10">Kriterlere uyan müşteri bulunamadı</p>`
+          ? `<div class="text-center py-12">
+               <p class="text-sm font-medium text-gray-600 mb-1">Eşleşen müşteri bulunamadı</p>
+               <p class="text-xs text-gray-400">Müşteri arama kriterleri bu portföyle örtüşmüyor</p>
+             </div>`
           : `<div class="divide-y divide-gray-50">
               ${matches.map(c => `
                 <div class="flex items-center gap-4 px-5 py-4 ${SCORE_BG(c.score)} border-l-2 ${SCORE_BG(c.score)}">
@@ -1137,8 +1197,8 @@ function openInteractionModal(customerId) {
         <div>
           <label class="text-sm font-medium text-gray-700">Tür</label>
           <select name="type" class="inp mt-1">
-            ${['not','arama','mesaj','gorusum','gosteriminotu','email'].map(t =>
-              `<option value="${t}">${t}</option>`).join('')}
+            ${[['not','Not'],['arama','Telefon Araması'],['mesaj','Mesaj'],['gorusum','Görüşme'],['gosteriminotu','Gösterim Notu'],['email','E-posta']].map(([v,t]) =>
+              `<option value="${v}">${t}</option>`).join('')}
           </select>
         </div>
         <div>
@@ -1245,17 +1305,19 @@ async function renderTasks(filterStatus = 'bekliyor') {
       <div class="flex gap-2 mb-5">
         ${[{val:'bekliyor',label:'Bekleyenler'},{val:'tamamlandi',label:'Tamamlananlar'}].map(t => `
           <button onclick="renderTasks('${t.val}')"
-            class="text-sm px-4 py-1.5 rounded-lg font-medium transition-all ${filterStatus === t.val
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}">${t.label}
+            class="tab-btn ${filterStatus === t.val ? 'tab-active' : ''}">${t.label}
           </button>`).join('')}
       </div>
 
       <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         ${tasks.length === 0
-          ? `<div class="text-center text-gray-400 py-16">
-               <div class="text-4xl mb-3">${filterStatus === 'bekliyor' ? '🎉' : '📋'}</div>
-               <p class="text-sm">${filterStatus === 'bekliyor' ? 'Bekleyen görev yok!' : 'Tamamlanan görev yok'}</p>
+          ? `<div class="text-center py-16">
+               <div class="w-14 h-14 bg-gray-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+                 <svg class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+               </div>
+               <p class="text-sm font-semibold text-gray-700 mb-1">${filterStatus === 'bekliyor' ? 'Bekleyen görev yok' : 'Tamamlanan görev yok'}</p>
+               <p class="text-xs text-gray-400 mb-5">${filterStatus === 'bekliyor' ? 'Yeni görev ekleyerek takibi sürdürün' : 'Görevleri tamamladığınızda burada görünür'}</p>
+               ${filterStatus === 'bekliyor' ? `<button onclick="openNewTaskModal()" class="btn-primary">+ Yeni Görev Ekle</button>` : ''}
              </div>`
           : `<table class="data-table">
                <thead>
@@ -1281,7 +1343,7 @@ async function renderTasks(filterStatus = 'bekliyor') {
                      <td class="text-gray-500 text-xs">${t.due_date || '—'}</td>
                      <td><span class="prio-${t.priority} text-xs font-medium">${t.priority}</span></td>
                      <td>
-                       <button onclick="deleteTask(${t.id})" class="text-gray-300 hover:text-red-400 text-lg leading-none">×</button>
+                       <button onclick="deleteTask(${t.id})" class="w-8 h-8 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-bold flex items-center justify-center transition-colors">×</button>
                      </td>
                    </tr>`).join('')}
                </tbody>
@@ -1294,7 +1356,10 @@ async function renderTasks(filterStatus = 'bekliyor') {
   }
 }
 
-function openNewTaskModal(customerId) {
+async function openNewTaskModal(customerId) {
+  let customers = [];
+  try { customers = await apiFetch('/customers?status=tumu'); } catch (_) {}
+
   openModal(`
     <div class="p-6">
       <h2 class="text-lg font-bold text-gray-900 mb-5">Yeni Görev</h2>
@@ -1302,6 +1367,13 @@ function openNewTaskModal(customerId) {
         <div>
           <label class="text-sm font-medium text-gray-700">Görev *</label>
           <input name="title" required class="inp mt-1" placeholder="Görevi açıkla..." />
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Müşteri</label>
+          <select name="customer_id" class="inp mt-1">
+            <option value="">— Seçiniz —</option>
+            ${customers.map(c => `<option value="${c.id}" ${customerId == c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+          </select>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
@@ -1327,7 +1399,7 @@ function openNewTaskModal(customerId) {
   document.getElementById('task-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
-    if (customerId) data.customer_id = customerId;
+    if (!data.customer_id) delete data.customer_id;
     try {
       await apiFetch('/tasks', { method: 'POST', body: data });
       closeModal();

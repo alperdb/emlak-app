@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
       WHERE 1=1`;
     const p = [];
     if (status && status !== 'tumu') { sql += ` AND c.status=?`;                     p.push(status); }
-    if (q)                           { sql += ` AND (c.name LIKE ? OR c.phone LIKE ?)`; p.push(`%${q}%`,`%${q}%`); }
+    if (q)                           { sql += ` AND (LOWER(c.name) LIKE LOWER(?) OR c.phone LIKE ? OR LOWER(COALESCE(c.email,'')) LIKE LOWER(?))`; p.push(`%${q}%`,`%${q}%`,`%${q}%`); }
     sql += ` ORDER BY c.last_contact_at DESC, c.created_at DESC`;
     res.json(db.prepare(sql).all(...p));
   } catch (err) { res.status(500).json({ error: err.message }); }

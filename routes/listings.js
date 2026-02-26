@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
     if (status)   { sql += ` AND status=?`;                                       p.push(status); }
     if (type)     { sql += ` AND type=?`;                                         p.push(type); }
     if (district) { sql += ` AND district LIKE ?`;                                p.push(`%${district}%`); }
-    if (q)        { sql += ` AND (title LIKE ? OR district LIKE ? OR address LIKE ?)`; p.push(`%${q}%`,`%${q}%`,`%${q}%`); }
+    if (q)        { sql += ` AND (LOWER(title) LIKE LOWER(?) OR LOWER(COALESCE(district,'')) LIKE LOWER(?) OR LOWER(COALESCE(address,'')) LIKE LOWER(?))`; p.push(`%${q}%`,`%${q}%`,`%${q}%`); }
     sql += ` ORDER BY created_at DESC`;
     res.json(db.prepare(sql).all(...p));
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -102,6 +102,10 @@ router.post('/', (req, res) => {
 // PUT /api/listings/:id
 router.put('/:id', (req, res) => {
   try {
+    if (!req.body.property_type) {
+      const existing = db.prepare(`SELECT property_type FROM listings WHERE id=?`).get(req.params.id);
+      if (existing) req.body.property_type = existing.property_type || 'konut';
+    }
     const set = ALL_FIELDS.map(f => `${f}=?`).join(', ');
     db.prepare(`UPDATE listings SET ${set}, updated_at=datetime('now','localtime') WHERE id=?`)
       .run(...pick(req.body), req.params.id);
