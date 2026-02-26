@@ -852,7 +852,7 @@ async function openListingModal(id) {
           <div>
             <label class="text-sm font-medium text-gray-700">Isınma</label>
             <select name="heating_type" class="inp mt-1">
-              ${['kombi','merkezi','yerden','klima','yok'].map(h => `<option value="${h}" ${sel(l.heating_type,h)}>${h}</option>`).join('')}
+              ${[['kombi','Kombi'],['merkezi','Merkezi Sistem'],['yerden','Yerden Isıtma'],['klima','Klima'],['yok','Yok']].map(([v,t]) => `<option value="${v}" ${sel(l.heating_type,v)}>${t}</option>`).join('')}
             </select>
           </div>
         </div>
@@ -860,13 +860,13 @@ async function openListingModal(id) {
           <div>
             <label class="text-sm font-medium text-gray-700">Tapu Tipi</label>
             <select name="deed_status" class="inp mt-1">
-              ${['','kat-mulkiyeti','kat-irtifaki','arsa-payi','hisseli'].map(d => `<option value="${d}" ${sel(l.deed_status,d)}>${d||'—'}</option>`).join('')}
+              ${[['','—'],['kat-mulkiyeti','Kat Mülkiyeti'],['kat-irtifaki','Kat İrtifakı'],['arsa-payi','Arsa Payı'],['hisseli','Hisseli']].map(([v,t]) => `<option value="${v}" ${sel(l.deed_status,v)}>${t}</option>`).join('')}
             </select>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-700">Kullanım Durumu</label>
             <select name="occupancy_status" class="inp mt-1">
-              ${['bos','kirada','mal-sahibi'].map(o => `<option value="${o}" ${sel(l.occupancy_status,o)}>${o}</option>`).join('')}
+              ${[['bos','Boş'],['kirada','Kirada'],['mal-sahibi','Mal Sahibi Kullanıyor']].map(([v,t]) => `<option value="${v}" ${sel(l.occupancy_status,v)}>${t}</option>`).join('')}
             </select>
           </div>
           <div>
@@ -1031,15 +1031,15 @@ async function openCustomerModal(id) {
           <div>
             <label class="text-sm font-medium text-gray-700">Durum</label>
             <select name="status" class="inp mt-1">
-              ${['yeni','sicak','ilik','soguk','aktif-musteri'].map(s =>
-                `<option value="${s}" ${sel(c.status,s)}>${s}</option>`).join('')}
+              ${[['yeni','Yeni'],['sicak','Sıcak'],['ilik','Ilık'],['soguk','Soğuk'],['aktif-musteri','Aktif Müşteri']].map(([v,t]) =>
+                `<option value="${v}" ${sel(c.status,v)}>${t}</option>`).join('')}
             </select>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-700">Kaynak</label>
             <select name="source" class="inp mt-1">
-              ${['sahibinden','hurriyet','referans','sosyal-medya','tabela','diger'].map(s =>
-                `<option value="${s}" ${sel(c.source,s)}>${s}</option>`).join('')}
+              ${[['sahibinden','Sahibinden'],['hurriyet','Hürriyet'],['referans','Referans'],['sosyal-medya','Sosyal Medya'],['tabela','Tabela'],['diger','Diğer']].map(([v,t]) =>
+                `<option value="${v}" ${sel(c.source,v)}>${t}</option>`).join('')}
             </select>
           </div>
         </div>
@@ -1086,13 +1086,13 @@ async function openCustomerModal(id) {
             <div>
               <label class="text-sm font-medium text-gray-700">Aciliyet</label>
               <select name="urgency" class="inp mt-1">
-                ${['belirsiz','acil-1ay','3-ay','6-ay'].map(u => `<option value="${u}" ${sel(n.urgency,u)}>${u}</option>`).join('')}
+                ${[['belirsiz','Belirsiz'],['acil-1ay','Acil (1 Ay)'],['3-ay','3 Ay İçinde'],['6-ay','6 Ay İçinde']].map(([v,t]) => `<option value="${v}" ${sel(n.urgency,v)}>${t}</option>`).join('')}
               </select>
             </div>
             <div>
               <label class="text-sm font-medium text-gray-700">Finansman</label>
               <select name="financing" class="inp mt-1">
-                ${['belirsiz','nakit','kredi','karma'].map(f => `<option value="${f}" ${sel(n.financing,f)}>${f}</option>`).join('')}
+                ${[['belirsiz','Belirsiz'],['nakit','Nakit'],['kredi','Kredi'],['karma','Karma']].map(([v,t]) => `<option value="${v}" ${sel(n.financing,v)}>${t}</option>`).join('')}
               </select>
             </div>
           </div>
