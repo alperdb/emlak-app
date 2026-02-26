@@ -2,46 +2,52 @@
   "name": "emlak-ofis-yonetim",
   "version": "1.0.0",
   "description": "Emlak Ofisi Yönetim Uygulaması",
-  "main": "server.js",
+  "main": "electron/main.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
-    "electron": "electron electron.js",
+    "dev": "electron .",
     "build": "electron-builder --win --x64"
   },
   "build": {
     "appId": "com.emlak.ofis",
     "productName": "Emlak Ofisi",
+    "copyright": "Emlak Ofisi Yönetim",
+    "directories": {
+      "output": "dist"
+    },
+    "npmRebuild": true,
     "files": [
-      "electron.js",
+      "electron/**/*",
       "server.js",
       "db.js",
       "routes/**/*",
       "public/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "!node_modules/electron/**/*",
+      "!node_modules/electron-builder/**/*",
+      "!node_modules/nodemon/**/*"
     ],
     "extraResources": [
-      { "from": "emlak.db", "to": "emlak.db", "filter": ["**/*"] }
+      {
+        "from": "emlak.db",
+        "to": "emlak.db"
+      }
     ],
     "win": {
-      "target": "nsis",
-      "icon": "public/favicon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true,
-      "installerLanguages": ["tr_TR"],
-      "language": "1055"
+      "target": [
+        { "target": "zip", "arch": ["x64"] }
+      ],
+      "requestedExecutionLevel": "asInvoker"
     }
   },
   "dependencies": {
-    "better-sqlite3": "^9.4.3",
+    "better-sqlite3": "^12.6.2",
     "cors": "^2.8.5",
     "express": "^4.18.3",
     "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
-    "electron": "^40.6.1",
+    "electron": "^31.7.7",
     "electron-builder": "^26.8.1",
     "nodemon": "^3.1.0"
   }
