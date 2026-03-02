@@ -21,24 +21,32 @@
 
     /* ── Design Tokens ─────────────────────────────────────── */
     :root {
-      --radius:    12px;
-      --radius-sm: 8px;
-      --shadow:    0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.04);
-      --shadow-md: 0 4px 14px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.05);
-      --primary:   #2563eb;
-      --border:    #e5e7eb;
-      --bg-subtle: #f9fafb;
+      --radius:       12px;
+      --radius-sm:    8px;
+      --shadow:       0 1px 4px rgba(0,0,0,.06);
+      --shadow-md:    0 4px 16px rgba(0,0,0,.08);
+      --primary:      #C4704A;
+      --primary-dark: #A85C3A;
+      --primary-bg:   #F5EBE4;
+      --border:       #E8E0D8;
+      --bg:           #EDE8E1;
+      --surface:      #FFFFFF;
+      --text:         #0A0A0A;
+      --muted:        #6B6560;
     }
 
+    /* ── Page Title ────────────────────────────────────────── */
+    .page-title { font-size:2rem; font-weight:800; letter-spacing:-0.03em; color:var(--text); line-height:1.1; border-left:3px solid var(--primary); padding-left:12px; }
+
     /* ── Nav ───────────────────────────────────────────────── */
-    .nav-link { transition: all 0.12s; }
-    .nav-link.active { background: var(--primary) !important; color:#fff !important; }
-    .nav-link.active svg, .nav-link.active span { color:#fff !important; }
+    .nav-link { transition:all 0.12s; display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:6px; font-size:13px; font-weight:500; color:var(--muted); text-decoration:none; white-space:nowrap; }
+    .nav-link:hover  { color:var(--text); background:var(--primary-bg); }
+    .nav-link.active { color:var(--primary) !important; background:var(--primary-bg) !important; font-weight:600; }
 
     /* ── Badges ────────────────────────────────────────────── */
     .badge { display:inline-flex; align-items:center; padding:2px 10px; border-radius:9999px; font-size:11px; font-weight:600; letter-spacing:.02em; white-space:nowrap; }
     .badge-sicak     { background:#fef3c7; color:#92400e; }
-    .badge-yeni      { background:#dbeafe; color:#1e40af; }
+    .badge-yeni      { background:#F5EBE4; color:#A85C3A; }
     .badge-ilik      { background:#dcfce7; color:#166534; }
     .badge-soguk     { background:#f1f5f9; color:#64748b; }
     .badge-aktif     { background:#d1fae5; color:#065f46; }
@@ -48,197 +56,160 @@
 
     /* ── Priority ──────────────────────────────────────────── */
     .prio-acil  { color:#dc2626; font-weight:600; }
-    .prio-normal{ color:#2563eb; }
+    .prio-normal{ color:var(--primary); }
     .prio-dusuk { color:#9ca3af; }
 
     /* ── Table ─────────────────────────────────────────────── */
     .data-table { width:100%; border-collapse:collapse; }
-    .data-table th { text-align:left; padding:11px 16px; font-size:11px; font-weight:700; color:#1e40af; text-transform:uppercase; letter-spacing:.06em; border-bottom:2px solid #dbeafe; background:#f0f7ff; }
-    .data-table td { padding:14px 16px; border-bottom:1px solid #f3f4f6; font-size:13px; color:#374151; vertical-align:middle; }
-    .data-table tbody tr:hover td { background:#eff6ff; }
+    .data-table th { text-align:left; padding:10px 16px; font-size:10.5px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; border-bottom:1px solid var(--border); background:var(--bg); }
+    .data-table td { padding:13px 16px; border-bottom:1px solid #F2ECE6; font-size:13px; color:#1a1a1a; vertical-align:middle; }
+    .data-table tbody tr:hover td { background:#FAF5F1; }
     .data-table tbody tr:last-child td { border-bottom:none; }
 
-    /* ── KPI gradients ─────────────────────────────────────── */
-    .kpi-blue   { background:linear-gradient(135deg,#60a5fa,#3b82f6); }
-    .kpi-green  { background:linear-gradient(135deg,#34d399,#10b981); }
-    .kpi-orange { background:linear-gradient(135deg,#fbbf24,#f59e0b); }
-    .kpi-purple { background:linear-gradient(135deg,#a78bfa,#8b5cf6); }
+    /* ── KPI Cards ─────────────────────────────────────────── */
+    .kpi-blue   { border-top:3px solid #C4704A !important; }
+    .kpi-green  { border-top:3px solid #5A8C6E !important; }
+    .kpi-orange { border-top:3px solid #C49A4A !important; }
+    .kpi-purple { border-top:3px solid #7B6FA0 !important; }
 
     /* ── Scrollbar ─────────────────────────────────────────── */
     ::-webkit-scrollbar { width:3px; height:3px; }
     ::-webkit-scrollbar-track { background:transparent; }
-    ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:99px; }
-    ::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+    ::-webkit-scrollbar-thumb { background:#D4C8BF; border-radius:99px; }
+    ::-webkit-scrollbar-thumb:hover { background:#B8AAA0; }
 
     /* ── Input ─────────────────────────────────────────────── */
-    .inp { width:100%; border:1px solid #d1d5db; border-radius:var(--radius-sm); padding:8px 12px; font-size:13px; outline:none; transition:border-color .15s, box-shadow .15s; background:#fff; }
-    .inp:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.12); }
+    .inp { width:100%; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 12px; font-size:13px; outline:none; transition:border-color .15s, box-shadow .15s; background:#fff; }
+    .inp:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(196,112,74,.12); }
 
     /* ── Buttons ───────────────────────────────────────────── */
     .btn-primary   { display:inline-flex; align-items:center; gap:6px; background:var(--primary); color:#fff; padding:0 16px; height:34px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; transition:background .15s, box-shadow .15s; cursor:pointer; white-space:nowrap; }
-    .btn-primary:hover   { background:#1d4ed8; box-shadow:0 2px 8px rgba(37,99,235,.28); }
-    .btn-secondary { display:inline-flex; align-items:center; gap:6px; background:#fff; color:#374151; padding:0 16px; height:34px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; border:1px solid #d1d5db; transition:background .15s; cursor:pointer; white-space:nowrap; }
-    .btn-secondary:hover { background:#f9fafb; }
-    .btn-ghost  { display:inline-flex; align-items:center; color:#6b7280; padding:0 10px; height:28px; border-radius:6px; font-size:12px; font-weight:500; border:1px solid #e5e7eb; transition:all .15s; cursor:pointer; white-space:nowrap; }
-    .btn-ghost:hover  { background:#f3f4f6; color:#374151; border-color:#d1d5db; }
+    .btn-primary:hover   { background:var(--primary-dark); box-shadow:0 2px 8px rgba(196,112,74,.30); }
+    .btn-secondary { display:inline-flex; align-items:center; gap:6px; background:#fff; color:#374151; padding:0 16px; height:34px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; border:1px solid var(--border); transition:background .15s; cursor:pointer; white-space:nowrap; }
+    .btn-secondary:hover { background:var(--bg); }
+    .btn-ghost  { display:inline-flex; align-items:center; color:var(--muted); padding:0 10px; height:28px; border-radius:6px; font-size:12px; font-weight:500; border:1px solid var(--border); transition:all .15s; cursor:pointer; white-space:nowrap; }
+    .btn-ghost:hover  { background:var(--bg); color:var(--text); border-color:#C8BDB6; }
     .btn-danger { display:inline-flex; align-items:center; color:#dc2626; padding:0 10px; height:28px; border-radius:6px; font-size:12px; border:1px solid #fecaca; transition:all .15s; cursor:pointer; }
     .btn-danger:hover { background:#fef2f2; }
 
     /* ── Tab Buttons ───────────────────────────────────────── */
-    .tab-btn { padding:5px 16px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; transition:all .15s; background:#fff; color:#6b7280; border:1px solid #e5e7eb; cursor:pointer; }
-    .tab-btn:hover:not(.tab-active) { background:#f9fafb; color:#374151; }
-    .tab-active { background:var(--primary) !important; color:#fff !important; border-color:var(--primary) !important; box-shadow:0 1px 4px rgba(37,99,235,.22); }
+    .tab-btn { padding:5px 16px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; transition:all .15s; background:#fff; color:var(--muted); border:1px solid var(--border); cursor:pointer; }
+    .tab-btn:hover:not(.tab-active) { background:var(--bg); color:var(--text); }
+    .tab-active { background:var(--primary) !important; color:#fff !important; border-color:var(--primary) !important; box-shadow:0 1px 4px rgba(196,112,74,.25); }
 
     /* ── Timeline ──────────────────────────────────────────── */
     .timeline { position:relative; padding-left:28px; }
-    .timeline::before { content:''; position:absolute; left:9px; top:0; bottom:0; width:2px; background:#e5e7eb; }
+    .timeline::before { content:''; position:absolute; left:9px; top:0; bottom:0; width:2px; background:var(--border); }
     .timeline-item { position:relative; margin-bottom:16px; }
     .timeline-dot { position:absolute; left:-23px; top:3px; width:16px; height:16px; border-radius:50%; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:9px; }
-    .tl-arama    { background:#3b82f6; }
+    .tl-arama    { background:#C4704A; }
     .tl-not      { background:#6b7280; }
     .tl-gorusum  { background:#8b5cf6; }
-    .tl-gosterim { background:#f59e0b; }
-    .tl-teklif   { background:#10b981; }
+    .tl-gosterim { background:#C49A4A; }
+    .tl-teklif   { background:#5A8C6E; }
     .tl-email    { background:#06b6d4; }
     .tl-mesaj    { background:#64748b; }
     .result-begendi      { background:#d1fae5; color:#065f46; }
     .result-kararsiz     { background:#fef3c7; color:#92400e; }
     .result-begenmedi    { background:#fee2e2; color:#991b1b; }
-    .result-teklif_verdi { background:#dbeafe; color:#1e40af; }
+    .result-teklif_verdi { background:#F5EBE4; color:#A85C3A; }
     .result-iptal        { background:#f3f4f6; color:#6b7280; }
     .pf-yuksek { background:#fee2e2; color:#991b1b; }
     .pf-uygun  { background:#d1fae5; color:#065f46; }
-    .pf-dusuk  { background:#dbeafe; color:#1e40af; }
+    .pf-dusuk  { background:#F5EBE4; color:#A85C3A; }
 
     /* ── Pipeline / Kanban ─────────────────────────────────── */
-    .pipe-col { flex-shrink:0; width:264px; display:flex; flex-direction:column; }
     .pipe-col-head {
       display:flex; align-items:center; justify-content:space-between;
-      padding:10px 14px;
+      padding:8px 10px;
       border-radius:10px 10px 0 0;
       background:#fff;
       border:1px solid var(--border);
       border-bottom:none;
-      border-top:3px solid var(--col-accent, #e5e7eb);
+      border-top:3px solid var(--col-accent, var(--border));
     }
     .pipe-col-body {
       flex:1; border:1px solid var(--border); border-top:none;
       border-radius:0 0 10px 10px;
-      padding:8px; overflow-y:auto; max-height:520px;
-      background:#f8fafc;
-      display:flex; flex-direction:column; gap:6px;
+      padding:6px; overflow-y:auto; max-height:calc(100vh - 260px);
+      background:var(--bg);
+      display:flex; flex-direction:column; gap:5px;
     }
     .pipe-card {
       background:#fff;
-      border:1px solid #e8ecf0;
-      border-radius:10px;
-      padding:14px;
-      box-shadow:0 1px 3px rgba(0,0,0,.05);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:10px;
+      box-shadow:0 1px 3px rgba(0,0,0,.04);
       transition:box-shadow .18s, transform .12s, border-color .15s;
     }
     .pipe-card:hover {
-      box-shadow:0 6px 18px rgba(0,0,0,.09);
+      box-shadow:0 4px 12px rgba(0,0,0,.08);
       transform:translateY(-1px);
-      border-color:#c7d2dd;
+      border-color:#C8BDB6;
     }
     .pipe-count-badge {
       display:inline-flex; align-items:center; justify-content:center;
       min-width:22px; height:20px; padding:0 6px;
-      border-radius:10px; background:#f1f5f9;
-      font-size:11px; font-weight:700; color:#64748b;
+      border-radius:10px; background:var(--primary-bg);
+      font-size:11px; font-weight:700; color:var(--primary);
     }
     .pipe-add-btn {
       width:100%; padding:7px 0;
-      border-radius:8px; border:1.5px dashed #d1d5db;
-      background:transparent; color:#b0bac5;
+      border-radius:8px; border:1.5px dashed #D4C8BF;
+      background:transparent; color:#C8BDB6;
       font-size:12px; font-weight:500;
       transition:all .15s; cursor:pointer; flex-shrink:0;
     }
-    .pipe-add-btn:hover { border-color:var(--primary); color:var(--primary); background:#eff6ff; }
+    .pipe-add-btn:hover { border-color:var(--primary); color:var(--primary); background:var(--primary-bg); }
   </style>
 </head>
-<body class="bg-slate-50 text-gray-800 h-screen flex flex-col overflow-hidden">
+<body class="min-h-screen flex flex-col" style="background:var(--bg);color:var(--text);">
 
-  <!-- TOP BAR -->
-  <header class="bg-white border-b border-gray-200 px-5 h-14 flex items-center gap-4 shrink-0 z-10" style="box-shadow:0 1px 4px rgba(0,0,0,.06);">
-    <div class="flex-1 max-w-sm">
-      <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-        <input id="global-search" type="text" placeholder="Müşteri, portföy ara… (Enter)"
-          class="w-full pl-9 pr-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-800 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
+  <!-- TOP NAV -->
+  <header class="fixed top-0 left-0 right-0 z-30 bg-white shrink-0" style="height:52px;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.06);border-radius:0 0 16px 16px;">
+    <div class="max-w-6xl mx-auto px-6 h-full flex items-center gap-2">
+
+      <!-- Logo + Office Name -->
+      <div class="flex items-center gap-2 shrink-0 mr-3">
+        <div class="w-7 h-7 rounded-lg bg-[#F5EBE4] flex items-center justify-center overflow-hidden shrink-0">
+          <img id="nav-logo" src="" alt="" class="hidden w-full h-full object-contain" />
+          <span id="nav-logo-placeholder" class="text-base leading-none select-none">🏠</span>
+        </div>
+        <span id="office-name-nav" class="text-sm font-semibold text-gray-900 hidden sm:block">Emlak Ofisi</span>
       </div>
-    </div>
-    <div class="ml-auto flex items-center gap-4">
-      <span id="task-badge" class="hidden text-xs bg-orange-100 text-orange-700 font-semibold px-3 py-1 rounded-full border border-orange-200"></span>
-      <span class="text-xs text-gray-600 font-medium select-none" id="current-date"></span>
+
+      <div class="w-px h-5 bg-gray-200 shrink-0 mr-1"></div>
+
+      <!-- Nav Links -->
+      <nav class="flex items-center gap-0.5 flex-1 overflow-x-auto" style="scrollbar-width:none;">
+        <a href="#/pipeline"   class="nav-link">Satış Süreci</a>
+        <a href="#/"           class="nav-link">Panel</a>
+        <a href="#/portfoy"    class="nav-link">Portföy</a>
+        <a href="#/musteriler" class="nav-link">Müşteriler</a>
+        <a href="#/gorevler"   class="nav-link">Görevler</a>
+      </nav>
+
+      <!-- Right: Search + Badge + Date + Settings -->
+      <div class="flex items-center gap-3 shrink-0 ml-2">
+        <div class="relative">
+          <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input id="global-search" type="text" placeholder="Ara… (Enter)"
+            class="pl-8 pr-3 py-1.5 border border-gray-200 rounded-lg text-xs text-gray-800 bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C4704A]/30 focus:border-[#C4704A] transition-all w-40 focus:w-52" style="transition:width .2s;" />
+        </div>
+        <span id="task-badge" class="hidden text-xs bg-orange-100 text-orange-700 font-semibold px-2.5 py-1 rounded-full border border-orange-200 whitespace-nowrap"></span>
+        <span class="text-xs text-gray-500 font-medium select-none hidden md:block whitespace-nowrap" id="current-date"></span>
+        <a href="#/ayarlar" class="nav-link !px-2 shrink-0" title="Ayarlar">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </a>
+      </div>
     </div>
   </header>
 
-  <div class="flex flex-1 overflow-hidden">
-
-    <!-- SIDEBAR -->
-    <nav class="w-56 bg-slate-900 shrink-0 flex flex-col overflow-hidden">
-
-      <!-- Logo Area -->
-      <div class="px-4 pt-5 pb-3">
-        <div class="bg-white flex items-center justify-center overflow-hidden"
-             style="border-radius:12px; padding:16px; min-height:80px; max-height:96px;">
-          <img id="sidebar-logo" src="" alt="" class="object-contain hidden" style="max-width:100%;max-height:64px;" />
-          <div id="sidebar-logo-placeholder" class="text-3xl select-none">🏠</div>
-        </div>
-        <p class="text-slate-200 font-semibold mt-2.5 text-sm text-center truncate" id="office-name-sidebar">Emlak Ofisi</p>
-      </div>
-
-      <div class="mx-4 border-t border-slate-700/50 mb-1"></div>
-
-      <!-- Nav Links -->
-      <div class="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
-
-        <a href="#/pipeline" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
-          <span>Satış Süreci</span>
-        </a>
-
-        <a href="#/" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-          <span>Kontrol Paneli</span>
-        </a>
-
-        <a href="#/portfoy" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-          <span>Portföy</span>
-        </a>
-
-        <a href="#/musteriler" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <span>Müşteriler</span>
-        </a>
-
-        <a href="#/gorevler" class="nav-link group flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <span>Görevler</span>
-        </a>
-
-      </div>
-
-      <div class="mx-4 border-t border-slate-700/50 mb-1"></div>
-
-      <!-- Bottom -->
-      <div class="px-3 pb-4">
-        <a href="#/ayarlar" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-slate-100 text-sm font-medium">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          <span>Ayarlar</span>
-        </a>
-      </div>
-    </nav>
-
-    <!-- MAIN CONTENT -->
-    <main id="main-content" class="flex-1 overflow-y-auto p-6">
-      <div class="text-center text-gray-400 mt-20">Yükleniyor...</div>
-    </main>
-  </div>
+  <!-- MAIN CONTENT -->
+  <main id="main-content" class="flex-1 overflow-y-auto" style="padding-top:52px; min-height:100vh;"></main>
 
   <!-- MODAL OVERLAY -->
   <div id="modal-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden" onclick="closeModal()"></div>

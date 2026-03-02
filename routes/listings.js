@@ -11,8 +11,9 @@ const ALL_FIELDS = [
 ];
 const BOOL_FIELDS = new Set(['is_furnished','is_in_site']);
 
+const DEFAULTS = { status: 'aktif' };
 function pick(body) {
-  return ALL_FIELDS.map(f => BOOL_FIELDS.has(f) ? (body[f] ? 1 : 0) : (body[f] ?? null));
+  return ALL_FIELDS.map(f => BOOL_FIELDS.has(f) ? (body[f] ? 1 : 0) : (body[f] ?? DEFAULTS[f] ?? null));
 }
 
 // GET /api/listings
@@ -113,10 +114,18 @@ router.put('/:id', (req, res) => {
   } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
-// DELETE /api/listings/:id (soft-delete)
+// DELETE /api/listings/:id (soft-delete → arşiv)
 router.delete('/:id', (req, res) => {
   db.prepare(`UPDATE listings SET status='arsivlendi' WHERE id=?`).run(req.params.id);
   res.json({ ok: true });
+});
+
+// DELETE /api/listings/:id/permanent (kalıcı sil)
+router.delete('/:id/permanent', (req, res) => {
+  try {
+    db.prepare(`DELETE FROM listings WHERE id=?`).run(req.params.id);
+    res.json({ ok: true });
+  } catch (err) { res.status(400).json({ error: err.message }); }
 });
 
 module.exports = router;

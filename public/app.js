@@ -18,9 +18,21 @@ async function apiFetch(path, opts = {}) {
   return res.json();
 }
 
+// ─── XSS Protection ─────────────────────────────────
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ─── UI Helpers ─────────────────────────────────────
 function setContent(html) {
-  document.getElementById('main-content').innerHTML = html;
+  document.getElementById('main-content').innerHTML =
+    `<div class="max-w-6xl mx-auto px-6 py-6">${html}</div>`;
 }
 
 function openModal(html) {
@@ -129,12 +141,12 @@ async function loadOfficeName() {
   try {
     const s = await apiFetch('/settings');
     const name = s.office_name || 'Emlak Ofisi';
-    document.getElementById('office-name-sidebar').textContent = name;
+    document.getElementById('office-name-nav').textContent = name;
     if (s.logo_path) {
-      const img = document.getElementById('sidebar-logo');
+      const img = document.getElementById('nav-logo');
       img.src = s.logo_path + '?t=' + Date.now();
       img.classList.remove('hidden');
-      document.getElementById('sidebar-logo-placeholder').classList.add('hidden');
+      document.getElementById('nav-logo-placeholder').classList.add('hidden');
     }
   } catch (_) {}
 }
@@ -166,7 +178,7 @@ document.getElementById('global-search').addEventListener('keydown', async (e) =
       <h2 class="text-lg font-bold text-gray-900 mb-5">"${q}" için sonuçlar</h2>
       ${listings.length ? `
         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Portföyler (${listings.length})</h3>
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+        <div class="bg-white rounded-xl border border-[#E8E0D8] overflow-hidden shadow-sm mb-6">
           <table class="data-table">
             <thead><tr><th>Portföy</th><th>Konum</th><th>Oda</th><th>Fiyat</th><th>Durum</th><th></th></tr></thead>
             <tbody>${listings.map(tableRowListing).join('')}</tbody>
@@ -174,7 +186,7 @@ document.getElementById('global-search').addEventListener('keydown', async (e) =
         </div>` : ''}
       ${customers.length ? `
         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Müşteriler (${customers.length})</h3>
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="bg-white rounded-xl border border-[#E8E0D8] overflow-hidden shadow-sm">
           <table class="data-table">
             <thead><tr><th>Ad Soyad</th><th>Telefon</th><th>Durum</th><th>Bütçe</th><th></th></tr></thead>
             <tbody>${customers.map(tableRowCustomer).join('')}</tbody>
@@ -200,7 +212,7 @@ async function renderDashboard() {
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Kontrol Paneli</h1>
+          <h1 class="page-title">Kontrol Paneli</h1>
           <p class="text-sm text-gray-400 mt-0.5">Günlük operasyon özeti</p>
         </div>
       </div>
@@ -220,37 +232,25 @@ async function renderDashboard() {
 
       <!-- KPI -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <a href="#/portfoy" class="kpi-blue rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
-          <div class="flex items-start justify-between mb-2">
-            <div class="text-3xl font-bold leading-none">${stats.activeListings}</div>
-            <svg class="w-5 h-5 text-blue-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-          </div>
-          <div class="text-xs font-semibold text-blue-100">Aktif Portföy</div>
-          <div class="text-xs text-blue-200 mt-0.5">Satışa hazır ilanlar →</div>
+        <a href="#/portfoy" class="kpi-blue bg-white rounded-xl px-5 py-4 block cursor-pointer hover:shadow-md transition-all" style="border:1px solid var(--border);">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color:var(--muted);">Aktif Portföy</p>
+          <div class="text-3xl font-bold leading-none" style="color:var(--text);">${stats.activeListings}</div>
+          <div class="text-xs mt-1.5" style="color:var(--muted);">Satışa hazır ilanlar →</div>
         </a>
-        <a href="#/musteriler" class="kpi-green rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
-          <div class="flex items-start justify-between mb-2">
-            <div class="text-3xl font-bold leading-none">${stats.activeCustomers}</div>
-            <svg class="w-5 h-5 text-green-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          </div>
-          <div class="text-xs font-semibold text-green-100">Aktif Müşteri</div>
-          <div class="text-xs text-green-200 mt-0.5">Takipte olan adaylar →</div>
+        <a href="#/musteriler" class="kpi-green bg-white rounded-xl px-5 py-4 block cursor-pointer hover:shadow-md transition-all" style="border:1px solid var(--border);">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color:var(--muted);">Aktif Müşteri</p>
+          <div class="text-3xl font-bold leading-none" style="color:var(--text);">${stats.activeCustomers}</div>
+          <div class="text-xs mt-1.5" style="color:var(--muted);">Takipte olan adaylar →</div>
         </a>
-        <a href="#/musteriler?status=sicak" class="kpi-orange rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
-          <div class="flex items-start justify-between mb-2">
-            <div class="text-3xl font-bold leading-none">${stats.hotLeads}</div>
-            <svg class="w-5 h-5 text-orange-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z"/></svg>
-          </div>
-          <div class="text-xs font-semibold text-orange-100">Sıcak Aday</div>
-          <div class="text-xs text-orange-200 mt-0.5">Öncelikli müşteriler →</div>
+        <a href="#/musteriler?status=sicak" class="kpi-orange bg-white rounded-xl px-5 py-4 block cursor-pointer hover:shadow-md transition-all" style="border:1px solid var(--border);">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color:var(--muted);">Sıcak Aday</p>
+          <div class="text-3xl font-bold leading-none" style="color:var(--text);">${stats.hotLeads}</div>
+          <div class="text-xs mt-1.5" style="color:var(--muted);">Öncelikli müşteriler →</div>
         </a>
-        <a href="#/gorevler" class="kpi-purple rounded-xl px-5 py-4 text-white shadow-sm block hover:opacity-90 transition-opacity cursor-pointer">
-          <div class="flex items-start justify-between mb-2">
-            <div class="text-3xl font-bold leading-none">${stats.pendingTasks}</div>
-            <svg class="w-5 h-5 text-purple-200 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <div class="text-xs font-semibold text-purple-100">Bekleyen Görev</div>
-          <div class="text-xs text-purple-200 mt-0.5">${stats.pendingTasks > 0 ? 'Tamamlanmayı bekliyor →' : 'Tüm görevler tamam →'}</div>
+        <a href="#/gorevler" class="kpi-purple bg-white rounded-xl px-5 py-4 block cursor-pointer hover:shadow-md transition-all" style="border:1px solid var(--border);">
+          <p class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color:var(--muted);">Bekleyen Görev</p>
+          <div class="text-3xl font-bold leading-none" style="color:var(--text);">${stats.pendingTasks}</div>
+          <div class="text-xs mt-1.5" style="color:var(--muted);">${stats.pendingTasks > 0 ? 'Tamamlanmayı bekliyor →' : 'Tüm görevler tamam →'}</div>
         </a>
       </div>
 
@@ -271,7 +271,7 @@ async function renderDashboard() {
                 </div>
                 <p class="text-xs text-gray-500 mt-0.5">${c.call_reason}</p>
               </div>
-              <a href="tel:${c.phone}" class="font-mono text-sm text-blue-600 hover:text-blue-800 shrink-0">${c.phone}</a>
+              <a href="tel:${c.phone}" class="font-mono text-sm text-[#C4704A] hover:text-[#A85C3A] shrink-0">${c.phone}</a>
               <button onclick="openCustomerDetail(${c.id})" class="btn-ghost shrink-0">Profil</button>
             </div>`).join('')}
         </div>
@@ -281,10 +281,10 @@ async function renderDashboard() {
       <div class="grid lg:grid-cols-2 gap-5">
 
         <!-- Görevler -->
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="bg-white rounded-xl overflow-hidden shadow-sm" style="border:1px solid var(--border);border-top:3px solid #C49A2A;">
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h2 class="font-semibold text-gray-900 text-sm">Bekleyen Görevler</h2>
-            <a href="#/gorevler" class="text-xs text-blue-600 hover:underline font-medium">Tümü →</a>
+            <a href="#/gorevler" class="text-xs text-[#C4704A] hover:underline font-medium">Tümü →</a>
           </div>
           <div class="divide-y divide-gray-50">
             ${pendingTasks.length === 0
@@ -295,25 +295,25 @@ async function renderDashboard() {
                  </div>`
               : pendingTasks.map(t => `
                   <div class="flex items-center gap-3 px-5 py-3">
-                    <button onclick="completeTask(${t.id})" class="w-4 h-4 rounded border-2 border-gray-300 shrink-0 hover:border-blue-500 transition-colors"></button>
+                    <button onclick="completeTask(${t.id})" class="w-4 h-4 rounded border-2 border-gray-300 shrink-0 hover:border-[#C4704A] transition-colors"></button>
                     <div class="min-w-0 flex-1">
-                      <p class="text-sm font-medium text-gray-800 truncate">${t.title}</p>
-                      ${t.customer_name ? `<p class="text-xs text-gray-400">${t.customer_name}</p>` : ''}
+                      <p class="text-sm font-medium text-gray-800 truncate">${esc(t.title)}</p>
+                      ${t.customer_name ? `<p class="text-xs text-gray-400">${esc(t.customer_name)}</p>` : ''}
                     </div>
                     <span class="text-xs prio-${t.priority} shrink-0">${t.priority}</span>
                   </div>`).join('')
             }
           </div>
           <div class="px-5 py-3 border-t border-gray-100">
-            <button onclick="openNewTaskModal()" class="text-xs text-blue-600 hover:underline font-medium">+ Yeni görev ekle</button>
+            <button onclick="openNewTaskModal()" class="text-xs text-[#C4704A] hover:underline font-medium">+ Yeni görev ekle</button>
           </div>
         </div>
 
         <!-- Son Etkileşimler -->
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="bg-white rounded-xl overflow-hidden shadow-sm" style="border:1px solid var(--border);border-top:3px solid #7B6FA0;">
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h2 class="font-semibold text-gray-900 text-sm">Son Etkileşimler</h2>
-            <a href="#/musteriler" class="text-xs text-blue-600 hover:underline font-medium">Müşteriler →</a>
+            <a href="#/musteriler" class="text-xs text-[#C4704A] hover:underline font-medium">Müşteriler →</a>
           </div>
           <div class="divide-y divide-gray-50">
             ${recentInteractions.length === 0
@@ -326,7 +326,7 @@ async function renderDashboard() {
                   <div class="px-5 py-3.5">
                     <div class="flex items-center justify-between mb-1">
                       <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded shrink-0">${INTERACTION_LABELS[i.type] || i.type}</span>
+                        <span class="text-xs font-semibold text-[#A85C3A] bg-[#F5EBE4] px-2 py-0.5 rounded shrink-0">${INTERACTION_LABELS[i.type] || i.type}</span>
                         <span class="text-sm font-semibold text-gray-900 truncate">${i.customer_name}</span>
                       </div>
                       <span class="text-xs text-gray-400 shrink-0 ml-2">${relDate(i.created_at)}</span>
@@ -355,12 +355,12 @@ const STAGE_LABELS = {
 };
 const STAGE_ACCENT = {
   lead       : '#94a3b8',
-  nitelikli  : '#3b82f6',
-  gosterim   : '#8b5cf6',
-  teklif     : '#f59e0b',
-  pazarlik   : '#f97316',
-  kapandi    : '#10b981',
-  kaybedildi : '#ef4444',
+  nitelikli  : '#C4704A',
+  gosterim   : '#7B6FA0',
+  teklif     : '#C49A2A',
+  pazarlik   : '#D4742A',
+  kapandi    : '#5A8C6E',
+  kaybedildi : '#DC4A4A',
 };
 
 async function renderPipeline() {
@@ -375,7 +375,7 @@ async function renderPipeline() {
     setContent(`
       <div class="flex items-center justify-between mb-5">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Satış Süreci</h1>
+          <h1 class="page-title">Satış Süreci</h1>
           <p class="text-sm text-gray-400 mt-0.5">${totalActive} aktif fırsat</p>
         </div>
         <button onclick="openPipelineModal()" class="btn-primary">+ Yeni Fırsat</button>
@@ -384,7 +384,7 @@ async function renderPipeline() {
       <!-- KPI özet -->
       <div class="flex gap-2 mb-5 flex-wrap">
         ${stages.map(s => `
-          <div class="bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-center"
+          <div class="bg-white border border-[#E8E0D8] rounded-xl px-4 py-2.5 text-center"
                style="min-width:84px; border-top:2px solid ${STAGE_ACCENT[s]};">
             <div class="text-xl font-bold text-gray-900">${kpi[s]}</div>
             <div class="text-xs text-gray-500 mt-0.5 font-medium">${STAGE_LABELS[s]}</div>
@@ -392,9 +392,9 @@ async function renderPipeline() {
       </div>
 
       <!-- Kanban board -->
-      <div class="flex gap-3 overflow-x-auto pb-4" style="min-height:520px;">
+      <div class="grid gap-2 pb-4" style="grid-template-columns:repeat(7,minmax(0,1fr));align-items:start;">
         ${stages.map(s => `
-          <div class="pipe-col">
+          <div class="flex flex-col">
             <div class="pipe-col-head" style="--col-accent:${STAGE_ACCENT[s]};">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full shrink-0" style="background:${STAGE_ACCENT[s]};"></span>
@@ -426,26 +426,25 @@ function pipelineCard(item, stages) {
   return `
     <div class="pipe-card">
       <!-- 1. Müşteri adı -->
-      <div class="flex items-start justify-between gap-1.5 mb-1.5">
-        <p class="text-sm font-bold text-gray-900 leading-snug truncate flex-1">${item.customer_name || item.title}</p>
+      <div class="flex items-start justify-between gap-1 mb-1">
+        <p class="text-xs font-bold text-gray-900 leading-snug truncate flex-1">${esc(item.customer_name || item.title)}</p>
         <button onclick="deletePipelineItem(${item.id})"
-          class="text-gray-300 hover:text-red-400 text-base leading-none shrink-0 transition-colors">×</button>
+          class="text-gray-300 hover:text-red-400 text-sm leading-none shrink-0 transition-colors">×</button>
       </div>
       <!-- 2. Portföy adı -->
       ${item.listing_title
-        ? `<p class="text-xs text-gray-400 truncate mb-2">🏢 ${item.listing_title}</p>`
-        : `<p class="text-xs text-gray-300 mb-2 italic">Portföy seçilmedi</p>`}
+        ? `<p class="text-[11px] text-gray-400 truncate mb-1.5">${esc(item.listing_title)}</p>`
+        : ''}
       <!-- 3. Fiyat -->
       ${item.value
-        ? `<p class="text-[15px] font-bold text-blue-600 mb-2 tracking-tight">${fmt(item.value)}</p>`
-        : `<p class="text-xs text-gray-300 mb-2">— Değer yok</p>`}
-      <!-- 4. Aşama + tarih -->
-      <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
+        ? `<p class="text-xs font-bold text-[#C4704A] mb-1.5 tracking-tight">${fmt(item.value)}</p>`
+        : ''}
+      <!-- 4. Aşama dropdown -->
+      <div class="pt-1.5 border-t border-gray-100">
         <select onchange="movePipelineStage(${item.id}, this.value)"
-          class="flex-1 text-xs border border-gray-200 rounded-md px-2 py-1.5 bg-white text-gray-600 cursor-pointer focus:outline-none focus:border-blue-400 transition-colors">
+          class="w-full text-[11px] border border-[#E8E0D8] rounded px-1.5 py-1 bg-white text-gray-600 cursor-pointer focus:outline-none focus:border-[#C4704A] transition-colors">
           ${stageOptions}
         </select>
-        <span class="text-xs text-gray-300 shrink-0 whitespace-nowrap">${relDate(item.updated_at)}</span>
       </div>
     </div>`;
 }
@@ -456,6 +455,20 @@ async function movePipelineStage(id, stage) {
     toast('Aşama güncellendi');
     renderPipeline();
   } catch (err) { toast(err.message, 'err'); }
+}
+
+async function deleteListing(id) {
+  if (!confirm('Bu portföyü arşivlemek istiyor musunuz?')) return;
+  await apiFetch(`/listings/${id}`, { method: 'DELETE' });
+  toast('Portföy arşivlendi');
+  renderListings();
+}
+
+async function permanentDeleteListing(id) {
+  if (!confirm('Bu portföy kalıcı olarak silinecek. Geri alınamaz. Emin misiniz?')) return;
+  await apiFetch(`/listings/${id}/permanent`, { method: 'DELETE' });
+  toast('Portföy kalıcı olarak silindi');
+  renderListings();
 }
 
 async function deletePipelineItem(id) {
@@ -547,7 +560,7 @@ async function renderListings(filterStatus = 'aktif') {
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Portföy</h1>
+          <h1 class="page-title">Portföy</h1>
           <p class="text-sm text-gray-400 mt-0.5">${listings.length} kayıt</p>
         </div>
         <button onclick="openListingModal()" class="btn-primary">+ Yeni Portföy</button>
@@ -569,7 +582,7 @@ async function renderListings(filterStatus = 'aktif') {
              <p class="text-xs text-gray-400 mb-5">Yeni portföy ekleyerek başlayın</p>
              <button onclick="openListingModal()" class="btn-primary">+ Portföy Ekle</button>
            </div>`
-        : `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm" style="border-top:3px solid #2563eb;">
+        : `<div class="bg-white rounded-xl overflow-hidden shadow-sm" style="border:1px solid var(--border);border-top:3px solid var(--primary);">
              <table class="data-table">
                <thead>
                  <tr>
@@ -596,25 +609,31 @@ async function renderListings(filterStatus = 'aktif') {
 
 function tableRowListing(l) {
   const typeLabel = l.type === 'satilik'
-    ? `<span class="text-blue-600 font-semibold">Satılık</span>`
+    ? `<span class="text-[#C4704A] font-semibold">Satılık</span>`
     : l.type === 'kiralik'
     ? `<span class="text-green-600 font-semibold">Kiralık</span>`
     : (l.type || '');
   return `
     <tr>
       <td>
-        <div class="font-bold text-gray-900">${l.title}</div>
+        <div class="font-bold text-gray-900">${esc(l.title)}</div>
         <div class="text-xs mt-0.5">${typeLabel}</div>
       </td>
-      <td class="text-gray-600">${[l.district, l.province].filter(Boolean).join(', ') || '—'}</td>
-      <td class="text-gray-600">${l.room_count || '—'}</td>
-      <td class="text-gray-600">${l.net_sqm ? l.net_sqm + ' m²' : '—'}</td>
-      <td class="font-bold text-blue-700">${fmt(l.price)}</td>
+      <td class="text-gray-600">${esc([l.district, l.province].filter(Boolean).join(', ')) || '—'}</td>
+      <td class="text-gray-600">${esc(l.room_count) || '—'}</td>
+      <td class="text-gray-600">${l.net_sqm ? esc(l.net_sqm) + ' m²' : '—'}</td>
+      <td class="font-bold text-[#C4704A]">${fmt(l.price)}</td>
       <td>${statusBadge(l.status)}</td>
       <td>
-        <div class="flex gap-1.5">
+        <div class="flex gap-1.5 items-center">
           <button onclick="openListingDetail(${l.id})" class="btn-ghost">Detay</button>
           <button onclick="openListingModal(${l.id})" class="btn-ghost">Düzenle</button>
+          <button onclick="deleteListing(${l.id})" class="btn-ghost text-orange-500 hover:text-orange-700 hover:bg-orange-50 px-2" title="Arşivle">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8M10 12v4M14 12v4"/></svg>
+          </button>
+          <button onclick="permanentDeleteListing(${l.id})" class="btn-ghost text-red-500 hover:text-red-700 hover:bg-red-50 px-2" title="Kalıcı Sil">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
         </div>
       </td>
     </tr>`;
@@ -633,7 +652,7 @@ async function renderCustomers(filterStatus = 'tumu') {
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Müşteriler</h1>
+          <h1 class="page-title">Müşteriler</h1>
           <p class="text-sm text-gray-400 mt-0.5">${customers.length} kayıt</p>
         </div>
         <button onclick="openCustomerModal()" class="btn-primary">+ Yeni Aday Müşteri</button>
@@ -655,7 +674,7 @@ async function renderCustomers(filterStatus = 'tumu') {
              <p class="text-xs text-gray-400 mb-5">Yeni aday müşteri ekleyerek başlayın</p>
              <button onclick="openCustomerModal()" class="btn-primary">+ Aday Müşteri Ekle</button>
            </div>`
-        : `<div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        : `<div class="bg-white rounded-xl overflow-hidden shadow-sm" style="border:1px solid var(--border);border-top:3px solid var(--primary);">
              <table class="data-table">
                <thead>
                  <tr>
@@ -683,10 +702,10 @@ async function renderCustomers(filterStatus = 'tumu') {
 function tableRowCustomer(c) {
   return `
     <tr>
-      <td class="font-semibold text-gray-900">${c.name}</td>
-      <td class="text-gray-600 font-mono text-xs">${c.phone}</td>
+      <td class="font-semibold text-gray-900">${esc(c.name)}</td>
+      <td class="text-gray-600 font-mono text-xs">${esc(c.phone)}</td>
       <td>${statusBadge(c.status)}</td>
-      <td class="text-gray-500 text-xs">${c.source || '—'}</td>
+      <td class="text-gray-500 text-xs">${esc(c.source) || '—'}</td>
       <td class="text-gray-600">${c.max_price ? fmt(c.max_price) : '—'}</td>
       <td class="text-gray-400 text-xs">${c.last_contact_at ? relDate(c.last_contact_at) : 'hiç'}</td>
       <td>
@@ -769,11 +788,11 @@ async function openCustomerDetail(id) {
         </button>
       </div>
 
-      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-5 shadow-sm">
+      <div class="bg-white rounded-xl border border-[#E8E0D8] p-6 mb-5 shadow-sm">
         <div class="flex items-start justify-between">
           <div>
             <div class="flex gap-2 mb-2">${statusBadge(c.status)}</div>
-            <h1 class="text-2xl font-bold text-gray-900">${c.name}</h1>
+            <h1 class="page-title">${c.name}</h1>
             <p class="text-gray-500 mt-1 text-sm">📞 ${c.phone}${c.phone2 ? ' · ' + c.phone2 : ''}</p>
             ${c.email ? `<p class="text-gray-500 text-sm">✉️ ${c.email}</p>` : ''}
             <p class="text-xs text-gray-400 mt-2">Kaynak: ${c.source || '—'} · Eklenme: ${fmtDate(c.created_at)}</p>
@@ -801,7 +820,7 @@ async function openCustomerDetail(id) {
       <div class="grid lg:grid-cols-2 gap-5">
 
         <!-- Timeline (Etkileşimler + Gösterimler) -->
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div class="bg-white rounded-xl border border-[#E8E0D8] overflow-hidden shadow-sm">
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h2 class="font-semibold text-gray-900 text-sm">Aktivite Zaman Çizelgesi</h2>
             <div class="flex gap-2">
@@ -815,7 +834,7 @@ async function openCustomerDetail(id) {
         </div>
 
         <!-- Görevler -->
-        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div class="bg-white rounded-xl border border-[#E8E0D8] overflow-hidden shadow-sm">
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h2 class="font-semibold text-gray-900 text-sm">Görevler</h2>
             <button onclick="openNewTaskModal(${c.id})" class="btn-ghost">+ Görev</button>
@@ -830,8 +849,8 @@ async function openCustomerDetail(id) {
                   <div class="flex items-center gap-3 px-5 py-3">
                     <input type="checkbox" ${t.status === 'tamamlandi' ? 'checked' : ''}
                       onchange="completeTask(${t.id}, this.checked)"
-                      class="rounded border-gray-300 text-blue-600 cursor-pointer" />
-                    <span class="text-sm flex-1 ${t.status === 'tamamlandi' ? 'line-through text-gray-400' : 'text-gray-800'}">${t.title}</span>
+                      class="rounded border-gray-300 text-[#C4704A] cursor-pointer" />
+                    <span class="text-sm flex-1 ${t.status === 'tamamlandi' ? 'line-through text-gray-400' : 'text-gray-800'}">${esc(t.title)}</span>
                     <span class="text-xs text-gray-400">${t.due_date || ''}</span>
                   </div>`).join('')
             }
@@ -940,11 +959,11 @@ async function openListingModal(id) {
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div class="flex items-center gap-2 mt-1">
-            <input name="is_furnished" type="checkbox" ${l.is_furnished ? 'checked' : ''} class="rounded border-gray-300 text-blue-600" />
+            <input name="is_furnished" type="checkbox" ${l.is_furnished ? 'checked' : ''} class="rounded border-gray-300 text-[#C4704A]" />
             <label class="text-sm font-medium text-gray-700">Eşyalı</label>
           </div>
           <div class="flex items-center gap-2 mt-1">
-            <input name="is_in_site" type="checkbox" ${l.is_in_site ? 'checked' : ''} class="rounded border-gray-300 text-blue-600" />
+            <input name="is_in_site" type="checkbox" ${l.is_in_site ? 'checked' : ''} class="rounded border-gray-300 text-[#C4704A]" />
             <label class="text-sm font-medium text-gray-700">Site İçi</label>
           </div>
         </div>
@@ -973,6 +992,12 @@ async function openListingModal(id) {
         <div>
           <label class="text-sm font-medium text-gray-700">İç Notlar</label>
           <textarea name="internal_notes" rows="2" class="inp mt-1">${l.internal_notes || ''}</textarea>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-700">Durum</label>
+          <select name="status" class="inp mt-1">
+            ${[['aktif','Aktif'],['opsiyonda','Opsiyonda'],['satildi','Satıldı'],['arsivlendi','Arşivlendi']].map(([v,t]) => `<option value="${v}" ${sel(l.status||'aktif',v)}>${t}</option>`).join('')}
+          </select>
         </div>
         <div class="flex justify-end gap-3 pt-2 border-t border-gray-100">
           <button type="button" onclick="closeModal()" class="btn-secondary">İptal</button>
@@ -1011,11 +1036,11 @@ async function openListingDetail(id) {
         </button>
       </div>
 
-      <div class="bg-white rounded-xl border border-gray-200 p-6 mb-5 shadow-sm">
+      <div class="bg-white rounded-xl border border-[#E8E0D8] p-6 mb-5 shadow-sm">
         <div class="flex items-start justify-between">
           <div>
             <div class="flex gap-2 mb-2">${statusBadge(l.status)}</div>
-            <h1 class="text-2xl font-bold text-gray-900">${l.title}</h1>
+            <h1 class="page-title">${l.title}</h1>
             <p class="text-gray-500 mt-1 text-sm">${[l.neighborhood, l.district, l.province].filter(Boolean).join(', ')}</p>
             <div class="flex gap-4 mt-2 text-sm text-gray-600">
               ${l.room_count ? `<span>🛏 ${l.room_count}</span>` : ''}
@@ -1024,7 +1049,7 @@ async function openListingDetail(id) {
             </div>
           </div>
           <div class="text-right">
-            <p class="text-2xl font-bold text-blue-700">${fmt(l.price)}</p>
+            <p class="text-2xl font-bold text-[#C4704A]">${fmt(l.price)}</p>
             ${l.monthly_dues ? `<p class="text-sm text-gray-400">Aidat: ${fmt(l.monthly_dues)}/ay</p>` : ''}
             <button onclick="openListingModal(${l.id})" class="btn-secondary text-sm mt-3">Düzenle</button>
           </div>
@@ -1033,7 +1058,7 @@ async function openListingDetail(id) {
         ${l.internal_notes ? `<p class="text-xs text-gray-400 italic mt-2">İç not: ${l.internal_notes}</p>` : ''}
       </div>
 
-      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+      <div class="bg-white rounded-xl border border-[#E8E0D8] overflow-hidden shadow-sm">
         <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <h2 class="font-semibold text-gray-900 text-sm">🎯 Kime Uygun?</h2>
           <span class="text-xs text-gray-500">${matches.length} eşleşme bulundu</span>
@@ -1056,12 +1081,12 @@ async function openListingDetail(id) {
                       ${statusBadge(c.status)}
                     </div>
                     <div class="flex flex-wrap gap-1">
-                      ${c.reasons.map(r => `<span class="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded">${r}</span>`).join('')}
+                      ${c.reasons.map(r => `<span class="text-xs bg-white border border-[#E8E0D8] text-gray-600 px-2 py-0.5 rounded">${r}</span>`).join('')}
                     </div>
                     ${c.max_price ? `<p class="text-xs text-gray-400 mt-1">Bütçe: maks ${fmt(c.max_price)}</p>` : ''}
                   </div>
                   <div class="shrink-0 flex flex-col gap-1 items-end">
-                    <a href="tel:${c.phone}" class="font-mono text-xs text-blue-600">${c.phone}</a>
+                    <a href="tel:${c.phone}" class="font-mono text-xs text-[#C4704A]">${c.phone}</a>
                     <button onclick="openCustomerDetail(${c.id})" class="btn-ghost">Profil</button>
                   </div>
                 </div>`).join('')}
@@ -1296,7 +1321,7 @@ async function renderTasks(filterStatus = 'bekliyor') {
     setContent(`
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Görevler</h1>
+          <h1 class="page-title">Görevler</h1>
           <p class="text-sm text-gray-400 mt-0.5">${tasks.length} kayıt</p>
         </div>
         <button onclick="openNewTaskModal()" class="btn-primary">+ Yeni Görev</button>
@@ -1309,7 +1334,7 @@ async function renderTasks(filterStatus = 'bekliyor') {
           </button>`).join('')}
       </div>
 
-      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+      <div class="bg-white rounded-xl overflow-hidden shadow-sm" style="border:1px solid var(--border);border-top:3px solid var(--primary);">
         ${tasks.length === 0
           ? `<div class="text-center py-16">
                <div class="w-14 h-14 bg-gray-100 rounded-2xl mx-auto mb-4 flex items-center justify-center">
@@ -1336,10 +1361,10 @@ async function renderTasks(filterStatus = 'bekliyor') {
                      <td>
                        <input type="checkbox" ${t.status === 'tamamlandi' ? 'checked' : ''}
                          onchange="completeTask(${t.id}, this.checked)"
-                         class="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer" />
+                         class="w-4 h-4 rounded border-gray-300 text-[#C4704A] cursor-pointer" />
                      </td>
-                     <td class="font-medium ${t.status === 'tamamlandi' ? 'line-through text-gray-400' : 'text-gray-800'}">${t.title}</td>
-                     <td class="text-gray-500 text-xs">${t.customer_name || '—'}</td>
+                     <td class="font-medium ${t.status === 'tamamlandi' ? 'line-through text-gray-400' : 'text-gray-800'}">${esc(t.title)}</td>
+                     <td class="text-gray-500 text-xs">${esc(t.customer_name) || '—'}</td>
                      <td class="text-gray-500 text-xs">${t.due_date || '—'}</td>
                      <td><span class="prio-${t.priority} text-xs font-medium">${t.priority}</span></td>
                      <td>
@@ -1428,10 +1453,10 @@ async function renderSettings() {
   const s = await apiFetch('/settings');
   setContent(`
     <div class="max-w-xl space-y-5">
-      <h1 class="text-2xl font-bold text-gray-900">Ayarlar</h1>
+      <h1 class="page-title">Ayarlar</h1>
 
       <!-- Ofis Bilgileri -->
-      <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+      <div class="bg-white rounded-xl border border-[#E8E0D8] overflow-hidden shadow-sm">
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
           <h2 class="font-semibold text-gray-900 text-sm">Ofis Bilgileri</h2>
         </div>
@@ -1440,7 +1465,7 @@ async function renderSettings() {
           <!-- Logo -->
           <div class="flex items-start gap-5 mb-6 pb-6 border-b border-gray-100">
             <div>
-              <div class="bg-white border border-gray-200 flex items-center justify-center overflow-hidden"
+              <div class="bg-white border border-[#E8E0D8] flex items-center justify-center overflow-hidden"
                    style="width:160px; height:100px; padding:16px; border-radius:12px;">
                 <img id="logo-preview" src="${s.logo_path || ''}"
                      class="${s.logo_path ? '' : 'hidden'} object-contain"
@@ -1498,7 +1523,7 @@ async function renderSettings() {
     const data = Object.fromEntries(new FormData(e.target));
     try {
       await apiFetch('/settings', { method: 'PUT', body: data });
-      document.getElementById('office-name-sidebar').textContent = data.office_name || 'Emlak Ofisi';
+      document.getElementById('office-name-nav').textContent = data.office_name || 'Emlak Ofisi';
       toast('Ayarlar kaydedildi');
     } catch (err) { toast(err.message, 'err'); }
   });
@@ -1519,10 +1544,10 @@ async function uploadLogo(input) {
     prev.classList.remove('hidden');
     document.getElementById('logo-placeholder').classList.add('hidden');
     // Sidebar
-    const sidebarImg = document.getElementById('sidebar-logo');
+    const sidebarImg = document.getElementById('nav-logo');
     sidebarImg.src = data.path + t;
     sidebarImg.classList.remove('hidden');
-    document.getElementById('sidebar-logo-placeholder').classList.add('hidden');
+    document.getElementById('nav-logo-placeholder').classList.add('hidden');
     toast('Logo yüklendi');
   } catch (err) { toast(err.message, 'err'); }
 }
