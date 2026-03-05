@@ -1,51 +1,24 @@
-# Emlak Ofisi Yönetim Uygulaması
+﻿# Real Estate Management Desktop Application
 
-Tek kullanıcılı, lokal çalışan emlak ofisi yönetim uygulaması.
+A desktop application designed to manage property listings, customers, and rental contracts.
 
-## Gereksinimler
+## Features
+- Property listing management
+- Customer tracking
+- Contract management
+- Workflow-oriented data handling
 
-- **Node.js** v18 veya üzeri → https://nodejs.org
-- İnternet bağlantısı (ilk açılışta Tailwind CSS CDN yüklenir, sonra önbelleklenir)
+## Tech Stack
+- Desktop app (Electron)
+- Local database (SQLite)
+- Version control (Git & GitHub)
 
-## Kurulum ve Çalıştırma
+## Run (Development)
+1) Install dependencies  
+2) Start the app
 
-```bash
-# 1. Proje klasörüne gir
-cd emlak-app
+> Note: Commands may differ depending on your setup (Electron/Node scripts).
 
-# 2. Bağımlılıkları yükle (tek seferlik)
-npm install
-
-# 3. Uygulamayı başlat
-npm start
-
-# 4. Tarayıcıda aç
-#    http://localhost:3000
-```
-
-## Geliştirme Modu (otomatik yeniden başlatma)
-
-```bash
-npm run dev
-```
-
-## Ekranlar
-
-| Ekran | URL |
-|-------|-----|
-| Dashboard | http://localhost:3000/#/ |
-| Portföy | http://localhost:3000/#/portfoy |
-| Müşteriler | http://localhost:3000/#/musteriler |
-| Görevler | http://localhost:3000/#/gorevler |
-| Ayarlar | http://localhost:3000/#/ayarlar |
-
-## Veri Dosyası
-
-Tüm veriler `emlak.db` (SQLite) dosyasında saklanır.
-Yedek almak için bu dosyayı kopyalayın.
-
-## Port Değiştirme
-
-```bash
-PORT=8080 npm start
-```
+## Links
+- GitHub profile: https://github.com/alperdb
+- Repository: https://github.com/alperdb/emlak-app
