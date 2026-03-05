@@ -1,35 +1,91 @@
 ﻿# Emlak Takip Uygulaması
 
-Bu proje, temel uygulama geliştirme ve iş akışı yönetimi mantığını öğrenmek amacıyla geliştirilmiş kişisel bir projedir.
+Bu proje, emlak süreçlerini organize etmek için geliştirilen basit bir masaüstü uygulamasıdır.  
+Kişisel bir öğrenme projesi olarak geliştirilmiştir ve temel uygulama geliştirme ile iş akışı yönetimi kavramlarını denemek amacıyla yapılmıştır.
 
-Uygulama; emlak, kiracı ve sözleşme bilgilerinin basit bir şekilde takip edilmesini sağlayan yerel bir sistem olarak tasarlanmıştır.
-
-## Amaç
-- Temel uygulama geliştirme
-- Basit iş akışı yönetimi
-- Git ve GitHub kullanımı
-- AI destekli geliştirme araçları ile prototipleme
+Uygulama; portföy, müşteri, görev ve satış pipeline süreçlerini tek bir panel üzerinden takip etmeyi amaçlar.
 
 ## Özellikler
-- Emlak kayıtlarını takip etme
-- Kiracı bilgilerini yönetme
-- Sözleşme bilgilerini saklama
-- Basit finans özetlerini görüntüleme
+
+### Pipeline Yönetimi
+Emlak satış sürecini aşamalar halinde takip etmeyi sağlar:
+
+- Lead
+- Nitelikli
+- Gösterim
+- Teklif
+- Pazarlık
+- Kapandı
+
+### Dashboard
+
+Günlük operasyonların hızlı özetini gösterir:
+
+- Aktif portföy sayısı
+- Aktif müşteri sayısı
+- Sıcak lead sayısı
+- Bekleyen görevler
+
+### Portföy Yönetimi
+
+Emlak ilanlarının kaydedilmesini ve takip edilmesini sağlar.
+
+- ilan bilgileri
+- konum
+- oda sayısı
+- metrekare
+- fiyat
+- durum
+
+### Müşteri Yönetimi
+
+Potansiyel müşterilerin ve leadlerin takip edilmesini sağlar.
+
+- yeni müşteri ekleme
+- müşteri listesi
+- lead takibi
+
+### Görev Yönetimi
+
+Emlak operasyonları için görev takibi yapılabilir.
+
+- görev oluşturma
+- bekleyen görevler
+- tamamlanan görevler
+
+## Amaç
+
+Bu proje aşağıdaki konuları öğrenmek ve denemek amacıyla geliştirilmiştir:
+
+- temel uygulama geliştirme
+- iş akışı (workflow) yönetimi
+- CRUD veri yapıları
+- Git ve GitHub ile versiyon kontrolü
+- AI destekli geliştirme araçları ile prototipleme
 
 ## Teknolojiler
+
 - Python
 - Git
 - GitHub
 
 ## Kurulum
 
+Projeyi klonlayın:
+
 git clone https://github.com/alperdb/emlak-app.git
 
+Proje klasörüne gidin:
+
 cd emlak-app
+
+Gerekli paketleri yükleyin:
 
 npm install
 
 ## Uygulamayı Çalıştırma
+
+Uygulamayı başlatmak için:
 
 npm run dev
 
@@ -39,7 +95,14 @@ npm run dev
 
 This project is a small desktop application developed as a personal learning project to experiment with application development and workflow management.
 
-The application helps organize simple property, tenant and contract information in a local workflow system.
+The application helps organize real estate operations such as property tracking, customer management and sales pipeline monitoring.
+
+## Features
+
+- Sales pipeline tracking
+- Property portfolio management
+- Customer management
+- Task tracking dashboard
 
 ## Installation
 
