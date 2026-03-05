@@ -156,3 +156,12 @@ This project was created as a personal experiment to explore application develop
 ![Screenshot](screenshots/Screenshot_6.png)
 
 
+
+## Download (Windows)
+
+TR: Uygulamanın Windows portable sürümünü buradan indirebilirsiniz.
+
+EN: Download the Windows portable version from the link below.
+
+[Download Emlak Ofisi Portable](https://drive.google.com/file/d/1j1Y1sMfAcZoQDuLz7XMN3jHqf6xjVPmw/view?usp=sharing)
+
