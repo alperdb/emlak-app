@@ -90,3 +90,67 @@ npm run dev
 ---
 
 This project was created as a personal experiment to explore application development and workflow tracking concepts.
+
+## Screenshots
+
+### Dashboard
+![Dashboard](screenshots/Screenshot_1.png)
+
+### Pipeline
+![Pipeline](screenshots/Screenshot_2.png)
+
+### Portfolio
+![Portfolio](screenshots/Screenshot_3.png)
+
+### Customers
+![Customers](screenshots/Screenshot_4.png)
+
+### Tasks
+![Tasks](screenshots/Screenshot_5.png)
+
+### Extra
+![Extra](screenshots/Screenshot_6.png)
+
+### Extra
+![Extra](screenshots/Screenshot_7.png)
+
+### Extra
+![Extra](screenshots/Screenshot_8.png)
+
+
+## Screenshots
+
+### Dashboard
+![Dashboard](screenshots/Screenshot_1.png)
+
+### Pipeline
+![Pipeline](screenshots/Screenshot_2.png)
+
+### Portfolio
+![Portfolio](screenshots/Screenshot_3.png)
+
+### Customers
+![Customers](screenshots/Screenshot_4.png)
+
+### Tasks
+![Tasks](screenshots/Screenshot_5.png)
+
+### Extra
+![Extra](screenshots/Screenshot_6.png)
+
+### Extra
+![Extra](screenshots/Screenshot_7.png)
+
+### Extra
+![Extra](screenshots/Screenshot_8.png)
+
+
+## Screenshots
+
+![Screenshot](screenshots/Screenshot_1.png)
+![Screenshot](screenshots/Screenshot_2.png)
+![Screenshot](screenshots/Screenshot_3.png)
+![Screenshot](screenshots/Screenshot_4.png)
+![Screenshot](screenshots/Screenshot_5.png)
+![Screenshot](screenshots/Screenshot_6.png)
+
