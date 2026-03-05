@@ -1,4 +1,5 @@
-﻿# Emlak CRM - Personal Learning Project
+﻿A small CRM-style desktop application built as a personal learning project to experiment with property management workflows.
+# Emlak CRM - Personal Learning Project
 
 Basit bir emlak operasyon yönetimi uygulaması.  
 Bu proje kişisel bir öğrenme projesi olarak geliştirilmiştir ve temel uygulama geliştirme ile iş akışı yönetimi (workflow) kavramlarını denemek amacıyla yapılmıştır.
@@ -153,4 +154,5 @@ This project was created as a personal experiment to explore application develop
 ![Screenshot](screenshots/Screenshot_4.png)
 ![Screenshot](screenshots/Screenshot_5.png)
 ![Screenshot](screenshots/Screenshot_6.png)
+
 
