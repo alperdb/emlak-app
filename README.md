@@ -104,3 +104,24 @@ EN: Download the Windows portable version from the link below.
 
 [Download Emlak Ofisi Portable](https://drive.google.com/file/d/1j1Y1sMfAcZoQDuLz7XMN3jHqf6xjVPmw/view?usp=sharing)
 
+
+## Screenshots
+
+### Dashboard
+![Dashboard](screenshots/emlak-app1.png)
+
+### Pipeline
+![Pipeline](screenshots/emlak-app2.png)
+
+### Portfolio
+![Portfolio](screenshots/emlak-app3.png)
+
+### Customers
+![Customers](screenshots/emlak-app4.png)
+
+### Tasks
+![Tasks](screenshots/emlak-app5.png)
+
+### Overview
+![Overview](screenshots/emlak-app6.png)
+
