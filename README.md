@@ -122,6 +122,6 @@ EN: Download the Windows portable version from the link below.
 ### Tasks
 ![Tasks](screenshots/emlak-app5.png)
 
-### Overview
-![Overview](screenshots/emlak-app6.png)
+### Settings
+![Settings](screenshots/emlak-app6.png)
 
