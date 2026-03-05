@@ -1,24 +1,54 @@
-﻿# Real Estate Management Desktop Application
+﻿# Emlak Takip Uygulaması
 
-A desktop application designed to manage property listings, customers, and rental contracts.
+Bu proje, temel uygulama geliştirme ve iş akışı yönetimi mantığını öğrenmek amacıyla geliştirilmiş kişisel bir projedir.
 
-## Features
-- Property listing management
-- Customer tracking
-- Contract management
-- Workflow-oriented data handling
+Uygulama; emlak, kiracı ve sözleşme bilgilerinin basit bir şekilde takip edilmesini sağlayan yerel bir sistem olarak tasarlanmıştır.
 
-## Tech Stack
-- Desktop app (Electron)
-- Local database (SQLite)
-- Version control (Git & GitHub)
+## Amaç
+- Temel uygulama geliştirme
+- Basit iş akışı yönetimi
+- Git ve GitHub kullanımı
+- AI destekli geliştirme araçları ile prototipleme
 
-## Run (Development)
-1) Install dependencies  
-2) Start the app
+## Özellikler
+- Emlak kayıtlarını takip etme
+- Kiracı bilgilerini yönetme
+- Sözleşme bilgilerini saklama
+- Basit finans özetlerini görüntüleme
 
-> Note: Commands may differ depending on your setup (Electron/Node scripts).
+## Teknolojiler
+- Python
+- Git
+- GitHub
 
-## Links
-- GitHub profile: https://github.com/alperdb
-- Repository: https://github.com/alperdb/emlak-app
+## Kurulum
+
+git clone https://github.com/alperdb/emlak-app.git
+
+cd emlak-app
+
+npm install
+
+## Uygulamayı Çalıştırma
+
+npm run dev
+
+---
+
+# Property Tracking App
+
+This project is a small desktop application developed as a personal learning project to experiment with application development and workflow management.
+
+The application helps organize simple property, tenant and contract information in a local workflow system.
+
+## Installation
+
+git clone https://github.com/alperdb/emlak-app.git
+
+cd emlak-app
+
+npm install
+
+## Run
+
+npm run dev
