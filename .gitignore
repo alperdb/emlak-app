@@ -1,2 +1,9 @@
-﻿nul
+﻿node_modules/
+dist/
+out/
+build/
+*.exe
+*.zip
+*.log
+nul
 NUL
