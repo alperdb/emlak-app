@@ -2,7 +2,7 @@
 # Emlak CRM - Personal Learning Project
 
 Basit bir emlak operasyon yönetimi uygulaması.  
-Bu proje kişisel bir öğrenme projesi olarak geliştirilmiştir ve temel uygulama geliştirme ile iş akışı yönetimi (workflow) kavramlarını denemek amacıyla yapılmıştır.
+Bu proje kişisel bir öğrenme projesi olarak geliştirilmiştir ve temel uygulama geliştirme ile iş akışı yönetimi (workflow) kavramlarını denemek ve öğrenmek amacıyla yapılmıştır.
 
 Uygulama; emlak portföyü, müşteri takibi ve satış pipeline süreçlerini tek bir panel üzerinden yönetmeyi amaçlar.
 
